@@ -146,7 +146,7 @@ function pyfind() {
 }
 
 function ghettovpn() {
-  $SSHUTTLE_EXECUTABLE -r "dcramer@$VPN_HOST" 10/8
+  $SSHUTTLE_EXECUTABLE -r "$VPN_HOST" 10/8
 }
 
 if [ -e "$HOME/.local-bashrc" ]; then
