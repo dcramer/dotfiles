@@ -82,7 +82,6 @@ else
   alias ls='ls --color=auto'
 fi
 export IGNOREEOF=1
-export PYTHONDONTWRITEBYTECODE=1
 export LESS=FRSX
 
 export EDITOR='subl -w'
@@ -93,6 +92,10 @@ export GIT_EDITOR=$SVN_EDITOR
 export LIBTOOLIZE=glibtoolize
 
 export PATH=~/bin:/usr/local/bin:/usr/local/sbin:$PATH
+
+# python
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
 # virtualenvwrapper and pip
 if [ `id -u` != '0' ]; then
