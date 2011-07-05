@@ -61,7 +61,7 @@ function activevirtualenv() {
 # \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
 # `backgroundjobs`\
 # \e${DEFAULT_COLOR}'
-export BASEPROMPT='\e${USER_COLOR}\u\
+export BASEPROMPT='\n\e${USER_COLOR}\u\
 `activevirtualenv` \
 \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
 \e${GRAY_COLOR}$(vcprompt)\
