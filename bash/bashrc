@@ -10,6 +10,7 @@ DEFAULT_COLOR="[00;1m"
 GRAY_COLOR="[37;1m"
 PINK_COLOR="[35;1m"
 GREEN_COLOR="[32;1m"
+CYAN_COLOR="[36;1m"
 ORANGE_COLOR="[33;1m"
 RED_COLOR="[31;1m"
 if [ `id -u` == '0' ]; then
@@ -22,35 +23,35 @@ VCPROMPT_EXECUTABLE=~/Development/vcprompt/vcprompt
 SSHUTTLE_EXECUTABLE=~/Development/sshuttle/sshuttle
 
 function vcprompt() {
-  $VCPROMPT_EXECUTABLE -f $' on \033[34m%n\033[00m:\033[00m%[unknown]b\033[32m%m%u'
+  $VCPROMPT_EXECUTABLE -f $' on \033[1;34m%n\033[00;1m:\033[0;37m%[unknown]b\033[32;1m%m%u'
 }
 
 function lastcommandfailed() {
   code=$?
   if [ $code != 0 ]; then
-    echo -n $'\033[37m exited \033[31m'
+    echo -n $'\033[37;1m exited \033[31;1m'
     echo -n $code
-    echo -n $'\033[37m'
+    echo -n $'\033[37;1m'
   fi
 }
 
 function backgroundjobs() {
   jobs|python -c 'if 1:
     import sys
-    items = ["\033[36m%s\033[37m" % x.split()[2]
+    items = ["\033[36;1m%s\033[37;1m" % x.split()[2]
              for x in sys.stdin.read().splitlines()]
     if items:
       if len(items) > 2:
         string = "%s, and %s" % (", ".join(items[:-1]), items[-1])
       else:
         string = ", ".join(items)
-      print "\033[37m running %s" % string
+      print "\033[37;1m running %s" % string
   '
 }
 
 function activevirtualenv() {
   if [ -n "$VIRTUAL_ENV" ]; then
-      echo -n $'\033[00;1m:\033[35;1m'
+      echo -n $'\033[00;1m:\033[36;1m'
       echo -n "${VIRTUAL_ENV#$WORKON_HOME/}"
   fi
 }
