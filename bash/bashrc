@@ -1,3 +1,6 @@
+# Inspired greatly by Armin Ronacher's bashrc
+# https://github.com/mitsuhiko/dotfiles/blob/master/bash/bashrc
+
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
