@@ -1,0 +1,140 @@
+# If not running interactively, don't do anything
+[ -z "$PS1" ] && return
+
+DEFAULT_COLOR="[00;1m"
+GRAY_COLOR="[37;1m"
+PINK_COLOR="[35;1m"
+GREEN_COLOR="[32;1m"
+ORANGE_COLOR="[33;1m"
+RED_COLOR="[31;1m"
+if [ `id -u` == '0' ]; then
+  USER_COLOR=$RED_COLOR
+else
+  USER_COLOR=$ORANGE_COLOR
+fi
+
+VCPROMPT_EXECUTABLE=~/Development/vcprompt/vcprompt
+SSHUTTLE_EXECUTABLE=~/Development/sshuttle/sshuttle
+
+function vcprompt() {
+  $VCPROMPT_EXECUTABLE -f $' on \033[34m%n\033[00m:\033[00m%[unknown]b\033[32m%m%u'
+}
+
+function lastcommandfailed() {
+  code=$?
+  if [ $code != 0 ]; then
+    echo -n $'\033[37m exited \033[31m'
+    echo -n $code
+    echo -n $'\033[37m'
+  fi
+}
+
+function backgroundjobs() {
+  jobs|python -c 'if 1:
+    import sys
+    items = ["\033[36m%s\033[37m" % x.split()[2]
+             for x in sys.stdin.read().splitlines()]
+    if items:
+      if len(items) > 2:
+        string = "%s, and %s" % (", ".join(items[:-1]), items[-1])
+      else:
+        string = ", ".join(items)
+      print "\033[37m running %s" % string
+  '
+}
+
+function activevirtualenv() {
+  if [ -n "$VIRTUAL_ENV" ]; then
+      echo -n $'\033[00;1m:\033[35;1m'
+      echo -n "${VIRTUAL_ENV#$WORKON_HOME/}"
+  fi
+}
+
+# export BASEPROMPT='\e${USER_COLOR}\u \
+# \e${GRAY_COLOR}at \e${ORANGE_COLOR}\h \
+# \e${GRAY_COLOR}$(vcprompt)\
+# \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+# `backgroundjobs`\
+# \e${DEFAULT_COLOR}'
+export BASEPROMPT='\e${USER_COLOR}\u\
+`activevirtualenv` \
+\e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+\e${GRAY_COLOR}$(vcprompt)\
+`backgroundjobs`\
+\e${DEFAULT_COLOR}'
+export PROMPT="${BASEPROMPT}
+$ "
+export PS1=$PROMPT
+
+export TERM=xterm-color
+export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
+
+# export CLICOLOR=1
+if [ `uname` == "Darwin" ]; then
+  export LSCOLORS=ExGxFxDxCxHxHxCbCeEbEb
+  export LC_CTYPE=en_US.utf-8
+else
+  alias ls='ls --color=auto'
+fi
+export IGNOREEOF=1
+export PYTHONDONTWRITEBYTECODE=1
+export LESS=FRSX
+
+export EDITOR='subl -w'
+export PYOPEN_CMD=mate
+export SVN_EDITOR=nano
+export GIT_EDITOR=$SVN_EDITOR
+
+export LIBTOOLIZE=glibtoolize
+
+export PATH=~/bin:/usr/local/bin:/usr/local/sbin:$PATH
+
+# virtualenvwrapper and pip
+if [ `id -u` != '0' ]; then
+  export VIRTUALENV_USE_DISTRIBUTE=1
+  export WORKON_HOME=$HOME/.virtualenvs
+  source /usr/local/bin/virtualenvwrapper.sh
+  export PIP_VIRTUALENV_BASE=$WORKON_HOME
+  export PIP_REQUIRE_VIRTUALENV=true
+  export PIP_RESPECT_VIRTUALENV=true
+  #export PIP_USE_MIRRORS=true
+fi
+
+# Enable bash history
+export HISTCONTROL=erasedups
+TSIZE=50000
+shopt -s histappend
+
+export FALLBACK_DYLD_LIBRARY_PATH=/usr/local/lib
+
+# These set up/down to do the history searching
+bind '"\e[A"':history-search-backward
+bind '"\e[B"':history-search-forward
+
+alias ..='cd ..'
+
+alias pgsqlstart='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+alias pgsqlstop='pg_ctl -D /usr/local/var/postgres/ -l /usr/local/var/postgres/server.log stop'
+
+alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative" 
+
+alias scpresume='rsync --partial --progress --progress --stats'
+
+alias vag='vagrant $@'
+
+function pyfind() { x=`python -c "import $1; print $1.__file__" | sed 's/\.pyc$/\.py/'`; if [ $? -ne 0 ]; then exit $?; fi; grep -q "__init__.py$"<<<$x && echo `dirname $x` || echo $x; }
+
+function pyopen() { x=`python -c "import $1; print $1.__file__" | sed 's/\.pyc$/\.py/'`; if [ $? -ne 0 ]; then exit $?; fi; grep -q "__init__.py$"<<<$x && $PYOPEN_CMD `dirname $x` || $PYOPEN_CMD $x; }
+
+function ghettovpn() {
+  $SSHUTTLE_EXECUTABLE -r "dcramer@$VPN_HOST" 10/8
+}
+
+if [ -e "$HOME/.local-bashrc" ]; then
+  source "$HOME/.local-bashrc"
+fi
+
+if [ -e "$HOME/.git-completion.bash" ]; then
+  source "$HOME/.git-completion.bash"
+fi;
+
