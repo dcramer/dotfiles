@@ -1,0 +1,4 @@
+#!/bin/bash
+# This hook is run after every virtualenv is activated.
+
+export PS1=$PROMPT
