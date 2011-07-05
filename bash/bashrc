@@ -84,9 +84,9 @@ fi
 export IGNOREEOF=1
 export LESS=FRSX
 
-export EDITOR='subl -w -n'
+export EDITOR='subl -n'
 export PYOPEN_CMD='subl -n'
-export SVN_EDITOR=$EDITOR
+export SVN_EDITOR='subl -w -n'
 export GIT_EDITOR=$SVN_EDITOR
 
 export LIBTOOLIZE=glibtoolize
