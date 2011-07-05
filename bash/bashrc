@@ -84,9 +84,9 @@ fi
 export IGNOREEOF=1
 export LESS=FRSX
 
-export EDITOR='subl -w'
-export PYOPEN_CMD=mate
-export SVN_EDITOR=nano
+export EDITOR='subl -w -n'
+export PYOPEN_CMD='subl -n'
+export SVN_EDITOR=$EDITOR
 export GIT_EDITOR=$SVN_EDITOR
 
 export LIBTOOLIZE=glibtoolize
@@ -120,6 +120,8 @@ bind '"\e[A"':history-search-backward
 bind '"\e[B"':history-search-forward
 
 alias ..='cd ..'
+
+alias edit='$EDITOR $@'
 
 alias pgsqlstart='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
 alias pgsqlstop='pg_ctl -D /usr/local/var/postgres/ -l /usr/local/var/postgres/server.log stop'
