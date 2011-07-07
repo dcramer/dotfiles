@@ -1,1 +1,6 @@
-cd into the base directory and run ./install.sh to setup symlinks
+My various dotfiles (works on Ubuntu and OS X).
+
+Heavily inspired by Armin Ronacher :)
+
+::
+    git clone git://github.com/dcramer/dotfiles.git && cd dotfiles && ./install.sh
