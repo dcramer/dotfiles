@@ -119,14 +119,16 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
 # virtualenvwrapper and pip
-if [ `id -u` != '0' && -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
+if [ `id -u` != '0' ]; then
   export VIRTUALENV_USE_DISTRIBUTE=1
   export WORKON_HOME=$HOME/.virtualenvs
-  source /usr/local/bin/virtualenvwrapper.sh
   export PIP_VIRTUALENV_BASE=$WORKON_HOME
   export PIP_REQUIRE_VIRTUALENV=true
   export PIP_RESPECT_VIRTUALENV=true
   #export PIP_USE_MIRRORS=true
+  if [ -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
+    source /usr/local/bin/virtualenvwrapper.sh
+  fi
 fi
 
 # Enable bash history
