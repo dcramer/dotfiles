@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Inspired greatly by Armin Ronacher's bashrc
 # https://github.com/mitsuhiko/dotfiles/blob/master/bash/bashrc
