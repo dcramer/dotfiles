@@ -12,6 +12,12 @@ mkdir -p ~/.virtualenvs/
 echo "Installing .bash_profile"
 ln -fs `pwd`/bash/bashrc ~/.bash_profile
 
+if [ -e "$HOME/.bashrc" ]; then
+  echo "WARNING: $HOME/.bashrc already exists, not symlinking to ~/.bash_profile"
+else
+  ln -fs ~/.bash_profile ~/.bashrc
+fi
+
 echo "Installing virtualenvwrapper hooks"
 ln -fs `pwd`/virtualenvwrapper/* ~/.virtualenvs/
 
