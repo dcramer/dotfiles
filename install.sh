@@ -23,3 +23,5 @@ ln -fs `pwd`/virtualenvwrapper/* ~/.virtualenvs/
 
 echo "Installing .pythonrc.py"
 ln -fs `pwd`/dotfiles/python/pythonrc.py ~/.pythonrc.py
+
+source ~/.bashrc
