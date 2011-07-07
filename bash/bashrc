@@ -119,7 +119,7 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
 # virtualenvwrapper and pip
-if [ `id -u` != '0' ]; then
+if [ `id -u` != '0' && -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
   export VIRTUALENV_USE_DISTRIBUTE=1
   export WORKON_HOME=$HOME/.virtualenvs
   source /usr/local/bin/virtualenvwrapper.sh
