@@ -73,19 +73,19 @@ export BASEPROMPT='\n\e${USER_COLOR}\u\
 
 if [ `uname` == "Darwin" ]; then
   export BASEPROMPT='\n\e${USER_COLOR}\u\
-  `activevirtualenv` \
-  \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
-  \e${GRAY_COLOR}$(vcprompt)\
-  `backgroundjobs`\
-  \e${DEFAULT_COLOR}'
+`activevirtualenv` \
+\e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+\e${GRAY_COLOR}`vcprompt`\
+`backgroundjobs`\
+\e${DEFAULT_COLOR}'
 else
   export BASEPROMPT='\n\e${USER_COLOR}\u\
-  `activevirtualenv` \
-  \e${GRAY_COLOR}at \e${ORANGE_COLOR}\h \
-  \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
-  \e${GRAY_COLOR}$(vcprompt)\
-  `backgroundjobs`\
-  \e${DEFAULT_COLOR}'
+`activevirtualenv` \
+\e${GRAY_COLOR}at \e${ORANGE_COLOR}\h \
+\e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+\e${GRAY_COLOR}`vcprompt`\
+`backgroundjobs`\
+\e${DEFAULT_COLOR}'
 fi
 
 export PROMPT="${BASEPROMPT}
