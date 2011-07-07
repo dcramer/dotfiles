@@ -23,7 +23,9 @@ VCPROMPT_EXECUTABLE=~/Development/vcprompt/vcprompt
 SSHUTTLE_EXECUTABLE=~/Development/sshuttle/sshuttle
 
 function vcprompt() {
-  $VCPROMPT_EXECUTABLE -f $' on \033[1;34m%n\033[00;1m:\033[0;37m%[unknown]b\033[32;1m%m%u'
+  if [ -e "$VCPROMPT_EXECUTABLE" ]; then
+    $VCPROMPT_EXECUTABLE -f $' on \033[1;34m%n\033[00;1m:\033[0;37m%[unknown]b\033[32;1m%m%u'
+  fi
 }
 
 function lastcommandfailed() {
@@ -68,11 +70,29 @@ export BASEPROMPT='\n\e${USER_COLOR}\u\
 \e${GRAY_COLOR}$(vcprompt)\
 `backgroundjobs`\
 \e${DEFAULT_COLOR}'
+
+if [ `uname` == "Darwin" ]; then
+  export BASEPROMPT='\n\e${USER_COLOR}\u\
+  `activevirtualenv` \
+  \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+  \e${GRAY_COLOR}$(vcprompt)\
+  `backgroundjobs`\
+  \e${DEFAULT_COLOR}'
+else
+  export BASEPROMPT='\n\e${USER_COLOR}\u\
+  `activevirtualenv` \
+  \e${GRAY_COLOR}at \e${ORANGE_COLOR}\h \
+  \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
+  \e${GRAY_COLOR}$(vcprompt)\
+  `backgroundjobs`\
+  \e${DEFAULT_COLOR}'
+fi
+
 export PROMPT="${BASEPROMPT}
 $ "
 export PS1=$PROMPT
 
-# export TERM=xterm-color
+export TERM=xterm-color
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 
 export CLICOLOR=1
@@ -147,6 +167,10 @@ function pyfind() {
 
 function ghettovpn() {
   $SSHUTTLE_EXECUTABLE -r "$VPN_HOST" 10/8
+}
+
+function killpycs(){
+  find . -name "*.pyc" -exec rm -rf {} \;
 }
 
 if [ -e "$HOME/.local-bashrc" ]; then
