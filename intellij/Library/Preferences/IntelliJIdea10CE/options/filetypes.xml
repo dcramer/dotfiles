@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <component name="CommunityFileTypes" version="10">
+    <ignoreFiles list="CVS;SCCS;RCS;rcs;.DS_Store;.svn;.pyc;.pyo;*.pyc;*.pyo;.git;*.hprof;_svn;.hg;*.lib;*~;__pycache__;.bundle;" />
+    <extensionMap>
+      <mapping ext="sbt" type="PLAIN_TEXT" />
+      <mapping pattern="IrcBot" type="Scala" />
+      <mapping ext="jspx" type="XML" />
+      <mapping ext="pom" type="XML" />
+      <mapping ext="rng" type="XML" />
+      <mapping ext="tagx" type="XML" />
+    </extensionMap>
+  </component>
+</application>
+

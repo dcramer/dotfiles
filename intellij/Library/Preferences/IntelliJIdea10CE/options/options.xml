@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <component name="DimensionService">
+    <location key="#com.intellij.ide.util.TreeClassChooserDialog.0.22.1676.1028" x="473" y="336" />
+    <location key="FileChooserDialogImpl.0.22.2556.1578" x="1006" y="454" />
+    <location key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog.0.22.2560.1493" x="1186" y="557" />
+    <location key="ProcessPopupWindow" x="1213" y="859" />
+    <location key="#com.intellij.ide.actions.ChooseComponentsToExportDialog.0.22.2560.1493" x="983" y="791" />
+    <location key="#com.intellij.fileTypes.FileTypeChooser.0.22.2556.1578" x="571" y="343" />
+    <location key="NewModule_or_Project.wizard" x="834" y="418" />
+    <location key="#Project_Structure.0.22.1676.1028" x="314" y="114" />
+    <location key="#com.intellij.execution.impl.EditConfigurationsDialog.0.22.1676.1028" x="385" y="210" />
+    <location key="OptionsEditor.0.22.2556.1578" x="694" y="300" />
+    <location key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes.0.22.2560.1493" x="1196" y="647" />
+    <location key="#com.intellij.fileTypes.FileTypeChooser.0.22.1676.1028" x="561" y="343" />
+    <size key="ProcessPopupWindow" width="383" height="165" />
+    <size key="#com.intellij.execution.impl.EditConfigurationsDialog.0.22.1676.1028" width="879" height="676" />
+  </component>
+  <component name="LafManager">
+    <laf class-name="com.apple.laf.AquaLookAndFeel" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="Non-Project Files" value="ffffe4" />
+    <property name="runConfigurationTab.dividerProportion" value="0.2686916" />
+    <property name="installation.uid" value="2a7dc182-5d7b-4e0e-8784-2433ebda4dbe" />
+    <property name="export.settings.path" value="$USER_HOME$/Library/Preferences/IntelliJIdea10CE/settings.jar" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="file.colors.enable.tests" value="e7fadb" />
+    <property name="file.colors.enable.non.project" value="ffffe4" />
+    <property name="project.jdk.splitter" value="0.2" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="Tests" value="e7fadb" />
+    <property name="default.storage.format" value=".idea (directory based)" />
+    <property name="LayoutCode.optimizeImports" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GoToClass.includeLibraries" value="false" />
+  </component>
+</application>
+

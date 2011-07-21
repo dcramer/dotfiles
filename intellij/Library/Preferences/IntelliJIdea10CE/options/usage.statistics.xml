@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+  <component name="UsagesStatistic" time="1311188684068" allowed="true" show-notification="false" period="weekly">
+    <group id="disabled-plugins" priority="0.0" data="org.jetbrains.android=1" />
+    <group id="frameworks" priority="0.0" data="scala=1" />
+    <group id="module type" priority="0.0" data="JAVA_MODULE=1" />
+    <group id="productivity" priority="0.0" data="codeassists.comment.line=1,editing.completion.finishByDotEtc=2,refactoring.rename=1,editing.completion.basic=7,editing.select.word=79" />
+    <group id="vcs" priority="0.0" data="Git=1" />
+  </component>
+</application>
+
