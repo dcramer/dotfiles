@@ -88,6 +88,8 @@ else
 \e${DEFAULT_COLOR}'
 fi
 
+export ARCHFLAGS='-arch i386 -arch x86_64'
+
 export PROMPT="${BASEPROMPT}
 $ "
 export PS1=$PROMPT
@@ -105,9 +107,9 @@ fi
 export IGNOREEOF=1
 export LESS=FRSX
 
-export EDITOR='subl -n'
-export PYOPEN_CMD=$EDITOR
-export SVN_EDITOR=nano
+export EDITOR=nano
+export PYOPEN_CMD=mate
+export SVN_EDITOR=$EDITOR
 export GIT_EDITOR=$SVN_EDITOR
 
 export LIBTOOLIZE=glibtoolize
