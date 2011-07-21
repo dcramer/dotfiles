@@ -23,5 +23,5 @@ install-pythonrc:
 
 install-subl:
 ifeq ($(shell uname),Darwin)
-	ln -fs "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
+	sudo ln -fs "/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
 endif
