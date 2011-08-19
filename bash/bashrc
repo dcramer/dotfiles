@@ -198,3 +198,5 @@ fi
 if [ -e "$HOME/.git-completion.bash" ]; then
   source "$HOME/.git-completion.bash"
 fi;
+
+[[ -s "/Users/dcramer/.rvm/scripts/rvm" ]] && source "/Users/dcramer/.rvm/scripts/rvm"  # This loads RVM into a shell session.
