@@ -157,6 +157,10 @@ alias scpresume='rsync --partial --progress --progress --stats'
 
 alias vag='vagrant $@'
 
+if [ -n `which hub` ]; then
+  alias git='hub'
+fi
+
 function pyopen() {
   $PYOPEN_CMD `pyfind $@`
 }
