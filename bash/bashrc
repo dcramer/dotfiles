@@ -149,7 +149,7 @@ alias ..='cd ..'
 alias edit='$EDITOR $@'
 
 alias pgsqlstart='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
-alias pgsqlstop='pg_ctl -D /usr/local/var/postgres/ -l /usr/local/var/postgres/server.log stop'
+alias pgsqlstop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
 
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative" 
 
@@ -182,13 +182,17 @@ function killpycs(){
 }
 
 function paste() {
-    BASE_URL="http://codebox.cc/${CODEBOX_ORG}/new"
-    TYPE=$1
-    if [ -z $TYPE ]; then
-        TYPE="text"
-    fi
-    pbpaste | curl ${BASE_URL} -X POST -F lang=${TYPE} -F "text=<-" -F api_token=${CODEBOX_TOKEN} -s -L -o /dev/null -w "%{url_effective}" | pbcopy
-    pbpaste
+  BASE_URL="http://codebox.cc/${CODEBOX_ORG}/new"
+  TYPE=$1
+  if [ -z $TYPE ]; then
+      TYPE="text"
+  fi
+  pbpaste | curl ${BASE_URL} -X POST -F lang=${TYPE} -F "text=<-" -F api_token=${CODEBOX_TOKEN} -s -L -o /dev/null -w "%{url_effective}" | pbcopy
+  pbpaste
+}
+
+function killmergedbranches() {
+  git branch | grep -v master | xargs git branch -d 2>/dev/null
 }
 
 function wgetdir() {
