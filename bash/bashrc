@@ -148,8 +148,10 @@ alias ..='cd ..'
 
 alias edit='$EDITOR $@'
 
-alias pgsqlstart='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
-alias pgsqlstop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+alias pgsql_start='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+alias pgsql_stop='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+alias es_start='launchctl stop org.elasticsearch'
+alias es_stop='launchctl start org.elasticsearch'
 
 alias glog="git log --graph --pretty=format:'%Cred%h%Creset %an: %s - %Creset %C(yellow)%d%Creset %Cgreen(%cr)%Creset' --abbrev-commit --date=relative" 
 
