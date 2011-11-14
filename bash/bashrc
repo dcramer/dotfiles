@@ -114,7 +114,7 @@ export GIT_EDITOR=$SVN_EDITOR
 
 export LIBTOOLIZE=glibtoolize
 
-export PATH=~/bin:/usr/local/bin:/usr/local/sbin:$PATH
+export PATH=~/pear/bin:~/bin:/usr/local/bin:/usr/local/sbin:$PATH
 
 # python
 export PYTHONDONTWRITEBYTECODE=1
