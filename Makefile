@@ -1,12 +1,9 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-intellij
+		 install-subl install-bin
 
-install-intellij:
-ifeq ($(shell uname),Darwin)
-	rm -r ~/Library/Preferences/IntelliJIdea10CE/
-	mkdir ~/Library/Preferences/IntelliJIdea10CE/
-	ln -fs `pwd`/intellij/Library/Preferences/IntelliJIdea10CE/* ~/Library/Preferences/IntelliJIdea10CE/
-endif
+install-bin:
+	mkdir -p ~/bin/
+	ln -fs `pwd`/bin/* ~/bin/
 
 install-bash:
 	cp ~/.bash_profile ~/.bash_profile.old
