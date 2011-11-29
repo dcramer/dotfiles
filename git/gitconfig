@@ -5,6 +5,7 @@
   diff = auto
   status = auto
   branch = auto
+  ui = auto
 [alias]
   st = status
   ci = commit
@@ -16,4 +17,6 @@
   lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
   ls = ls-files
 [hub]
-	protocol = https
+  protocol = https
+[core]
+  pager = less -R
