@@ -29,5 +29,5 @@ test "$(basename $0)" = "git-reup" && {
 
 # show an abbreviated commit log of stuff that was just merged.
 echo "Log:"
-git log --color --pretty=oneline --abbrev-commit HEAD@{1}.. |
+git log --decorate --color --pretty=oneline --abbrev-commit HEAD@{1}.. |
 sed 's/^/  /'
