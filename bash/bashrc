@@ -140,6 +140,13 @@ shopt -s histappend
 
 export FALLBACK_DYLD_LIBRARY_PATH=/usr/local/lib
 
+# we always pass these to ls(1)
+LS_COMMON="-hBG"
+
+# setup the main ls alias if we've established common args
+test -n "$LS_COMMON" &&
+alias ls="command ls $LS_COMMON"
+
 # These set up/down to do the history searching
 bind '"\e[A"':history-search-backward
 bind '"\e[B"':history-search-forward
