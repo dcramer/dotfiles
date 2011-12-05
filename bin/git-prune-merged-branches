@@ -19,7 +19,7 @@
 #/     git prune-merged-branches -u -r origin master
 #/
 #/   Delete branches in origin remote already merged into origin/master:
-#/     git prune-merged-branches -f -r origin/master
+#/     git prune-merged-branches -f -r origin master
 set -e
 
 # show usage message and exit
