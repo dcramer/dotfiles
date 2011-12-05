@@ -101,6 +101,7 @@ export CLICOLOR=1
 if [ `uname` == "Darwin" ]; then
   export LSCOLORS=ExGxFxDxCxHxHxCbCeEbEb
   export LC_CTYPE=en_US.utf-8
+  alias free=tfree
 else
   alias ls='ls --color=auto'
 fi
@@ -206,6 +207,9 @@ function killmergedbranches() {
 
 function wgetdir() {
   wget -r -l1 $@
+}
+function tfree() {
+  top -l1 -s0 | head -n11
 }
 
 if [ -e "$HOME/.local-bashrc" ]; then
