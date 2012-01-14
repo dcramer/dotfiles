@@ -54,7 +54,7 @@ function backgroundjobs() {
 function activevirtualenv() {
   if [ -n "$VIRTUAL_ENV" ]; then
       echo -n $'\033[00;1m:\033[36;1m'
-      echo -n "${VIRTUAL_ENV#$WORKON_HOME/}"
+      echo -n "$(basename $VIRTUAL_ENV)"
   fi
 }
 
@@ -123,6 +123,7 @@ export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
 # virtualenvwrapper and pip
 if [ `id -u` != '0' ]; then
+  export VIRTUAL_ENV_DISABLE_PROMPT=1
   export VIRTUALENV_USE_DISTRIBUTE=1
   export WORKON_HOME=$HOME/.virtualenvs
   export PIP_VIRTUALENV_BASE=$WORKON_HOME
