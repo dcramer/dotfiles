@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Usage: py-init
+#        py-init [directory]
+#
+# Creates __init__.py files in all subdirectories.
+
+set -e
+
+DIR="$@"
+
+test -z "$DIR" && DIR=.
+
+find $DIR -type d | xargs -I{} touch {}/__init__.py
