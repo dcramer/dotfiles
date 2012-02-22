@@ -1,5 +1,9 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin
+		 install-subl install-bin install-hub
+
+install-hub:
+	curl http://defunkt.io/hub/standalone -sLo ~/bin/hub && \
+	chmod 755 ~/bin/hub
 
 install-bin:
 	mkdir -p ~/bin/
