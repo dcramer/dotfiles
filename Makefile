@@ -1,16 +1,11 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin install-hub
-
-install-hub:
-	curl http://defunkt.io/hub/standalone -sLo ~/bin/hub && \
-	chmod 755 ~/bin/hub
+		 install-subl install-bin
 
 install-bin:
 	mkdir -p ~/bin/
 	ln -fs `pwd`/bin/* ~/bin/
 
 install-bash:
-	cp ~/.bash_profile ~/.bash_profile.old
 	ln -fs `pwd`/bash/bashrc ~/.bash_profile
 	ln -fs ~/.bash_profile ~/.bashrc
 	@echo "Old .bash_profile saved as .bash_profile.old"
