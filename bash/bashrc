@@ -109,7 +109,7 @@ export IGNOREEOF=1
 export LESS=FRSX
 
 export EDITOR=nano
-export PYOPEN_CMD=mate
+export PYOPEN_CMD=subl
 export SVN_EDITOR=$EDITOR
 export GIT_EDITOR=$SVN_EDITOR
 
@@ -220,5 +220,12 @@ fi
 if [ -e "$HOME/.git-completion.bash" ]; then
   source "$HOME/.git-completion.bash"
 fi;
+
+# GRC support
+grc_bash="`brew --prefix grc`/etc/grc.bashrc"
+if [ -e "$grc_bash" ]; then
+  source "$grc_bash"
+fi;
+
 
 [[ -s "/Users/dcramer/.rvm/scripts/rvm" ]] && source "/Users/dcramer/.rvm/scripts/rvm"  # This loads RVM into a shell session.
