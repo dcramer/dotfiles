@@ -6,7 +6,6 @@ install-bin:
 	ln -fs `pwd`/bin/* ~/bin/
 
 install-bash:
-	cp ~/.bash_profile ~/.bash_profile.old
 	ln -fs `pwd`/bash/bashrc ~/.bash_profile
 	ln -fs ~/.bash_profile ~/.bashrc
 	@echo "Old .bash_profile saved as .bash_profile.old"
