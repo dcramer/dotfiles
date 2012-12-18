@@ -1,6 +1,9 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
 		 install-subl install-bin
 
+install-git:
+	ln -fs `pwd`/git/gitconfig ~/.gitconfig
+
 install-bin:
 	mkdir -p ~/bin/
 	ln -fs `pwd`/bin/* ~/bin/
