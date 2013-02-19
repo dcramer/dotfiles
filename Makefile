@@ -1,5 +1,12 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin
+		 install-subl install-bin install-vcprompt
+
+install-vcprompt:
+	rm -rf /tmp/vcprompt
+	mkdir -p /tmp/vcprompt
+	@cd /tmp/vcprompt && curl -OL https://bitbucket.org/mitsuhiko/vcprompt/get/default.zip && \
+	    unzip -o -d vcprompt default.zip && cd vcprompt/mitsuhiko-* && make && \
+	    echo "Installing vcprompt to /usr/local/bin/vcprompt" && sudo mv vcprompt /usr/local/bin/vcprompt
 
 install-git:
 	ln -fs `pwd`/git/gitconfig ~/.gitconfig
