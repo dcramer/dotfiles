@@ -19,8 +19,8 @@ else
   USER_COLOR=$ORANGE_COLOR
 fi
 
-VCPROMPT_EXECUTABLE=~/Development/vcprompt/vcprompt
-SSHUTTLE_EXECUTABLE=~/Development/sshuttle/sshuttle
+VCPROMPT_EXECUTABLE=/usr/local/bin/vcprompt
+SSHUTTLE_EXECUTABLE=/usr/local/bin/sshuttle
 
 function vcprompt() {
   if [ -e "$VCPROMPT_EXECUTABLE" ]; then
