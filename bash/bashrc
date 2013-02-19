@@ -189,16 +189,6 @@ function killpycs(){
   find . -name "*.pyc" -exec rm -rf {} \;
 }
 
-function paste() {
-  BASE_URL="http://codebox.cc/${CODEBOX_ORG}/new"
-  TYPE=$1
-  if [ -z $TYPE ]; then
-      TYPE="text"
-  fi
-  pbpaste | curl ${BASE_URL} -X POST -F lang=${TYPE} -F "text=<-" -F api_token=${CODEBOX_TOKEN} -s -L -o /dev/null -w "%{url_effective}" | pbcopy
-  pbpaste
-}
-
 function killmergedbranches() {
   git branch | grep -v master | xargs git branch -d 2>/dev/null
 }
