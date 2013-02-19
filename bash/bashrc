@@ -185,7 +185,7 @@ function ghettovpn() {
   $SSHUTTLE_EXECUTABLE -r "$VPN_HOST" 10/8
 }
 
-function killpycs(){
+function cleanpycs() {
   find . -name "*.pyc" -exec rm -rf {} \;
 }
 
