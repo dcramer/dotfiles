@@ -209,9 +209,11 @@ if [ -e "$HOME/.git-completion.bash" ]; then
 fi;
 
 # GRC support
-grc_bash="`brew --prefix grc`/etc/grc.bashrc"
-if [ -e "$grc_bash" ]; then
-  source "$grc_bash"
+if [ `uname` == "Darwin" ]; then
+  grc_bash="`brew --prefix grc`/etc/grc.bashrc"
+  if [ -e "$grc_bash" ]; then
+    source "$grc_bash"
+  fi;
 fi;
 
 
