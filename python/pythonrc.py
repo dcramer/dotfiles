@@ -5,20 +5,16 @@
 import atexit
 import os
 import readline
-import rlcompleter
 
 readline.parse_and_bind('tab: complete')
 history = os.path.expanduser("~/.pythonhist")
 
-def save_history(history=history):
-    import readline
-    readline.write_history_file(history)
-
 if os.path.exists(history):
     try:
         readline.read_history_file(history)
-    except IOError:
-        pass
+    except IOError, e:
+        print "Failed to read %r: %s" % (history, e)
 
-atexit.register(save_history)
-del os, atexit, readline, rlcompleter, save_history, history
+readline.set_history_length(1024 * 5)
+
+atexit.register(lambda x=history: readline.write_history_file(x))
