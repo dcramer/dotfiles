@@ -218,3 +218,5 @@ fi;
 
 
 [[ -s "/Users/dcramer/.rvm/scripts/rvm" ]] && source "/Users/dcramer/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+
+export CHEF_USER=zeeg
