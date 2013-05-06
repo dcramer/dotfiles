@@ -18,7 +18,7 @@ if os.path.exists(history):
 readline.set_history_length(1024 * 5)
 
 def write_history(x):
-  import readline:
+  import readline
   readline.write_history_file(x)
 
 atexit.register(write_history)
