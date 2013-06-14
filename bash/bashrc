@@ -189,10 +189,6 @@ function cleanpycs() {
   find . -name "*.pyc" -exec rm -rf {} \;
 }
 
-function killmergedbranches() {
-  git branch | grep -v master | xargs git branch -d 2>/dev/null
-}
-
 function tfree() {
   top -l1 -s0 | head -n11
 }
