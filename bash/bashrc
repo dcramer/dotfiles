@@ -193,9 +193,6 @@ function killmergedbranches() {
   git branch | grep -v master | xargs git branch -d 2>/dev/null
 }
 
-function wgetdir() {
-  wget -r -l1 $@
-}
 function tfree() {
   top -l1 -s0 | head -n11
 }

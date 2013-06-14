@@ -1,0 +1,5 @@
+#!/bin/sh
+#/ Usage: wgetdir <url>
+#/ Downloads all subpaths linked at location.
+
+wget -r -l1 $@
