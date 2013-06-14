@@ -2,7 +2,6 @@
 
 # Inspired by https://github.com/dag/dotfiles/blob/master/python/.pythonrc
 
-import atexit
 import os
 import readline
 
@@ -17,8 +16,11 @@ if os.path.exists(history):
 
 readline.set_history_length(1024 * 5)
 
-def write_history(x):
-  import readline
-  readline.write_history_file(x)
+def write_history(history):
+    def wrapped():
+        import readline
+        readline.write_history_file(history)
+    return wrapped
 
-atexit.register(write_history)
+import atexit
+atexit.register(write_history(history))
