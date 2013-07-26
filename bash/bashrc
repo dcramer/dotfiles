@@ -197,9 +197,15 @@ if [ -e "$HOME/.local-bashrc" ]; then
   source "$HOME/.local-bashrc"
 fi
 
+# Use git-completion if available
 if [ -e "$HOME/.git-completion.bash" ]; then
   source "$HOME/.git-completion.bash"
 fi;
+
+# Use bash-completion, if available
+if [ -f /etc/bash_completion ]; then
+  . /etc/bash_completion
+fi
 
 # GRC support
 if [ `uname` == "Darwin" ]; then
