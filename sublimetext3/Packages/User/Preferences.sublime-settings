@@ -18,7 +18,8 @@
         "node_modules",
         "CACHE",
         "*.egg-info",
-        "*.egg"
+        "*.egg",
+        ".vagrant"
     ],
     "file_exclude_patterns": [
         "*.pyc",
