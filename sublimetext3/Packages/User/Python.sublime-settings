@@ -1,5 +1,6 @@
 {
     "translate_tabs_to_spaces": true,
     "tab_size": 4,
-    "ensure_newline_at_eof_on_save": true
+    "ensure_newline_at_eof_on_save": true,
+    "rulers": [80]
 }

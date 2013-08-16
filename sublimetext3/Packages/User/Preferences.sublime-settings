@@ -1,49 +1,57 @@
 {
-    "ignored_packages":
-    [
-        "Vintage"
-    ],
-    "soda_classic_tabs": false,
-    "trim_trailing_white_space_on_save": true,
-    "ensure_newline_at_eof_on_save": true,
-    "folder_exclude_patterns": [
-        ".svn",
-        ".git",
-        ".hg",
-        "CVS",
-        "htmlcov",
-        ".tox",
-        "dist",
-        "build",
-        "node_modules",
-        "CACHE",
-        "*.egg-info",
-        "*.egg",
-        ".vagrant"
-    ],
-    "file_exclude_patterns": [
-        "*.pyc",
-        "*.pyo",
-        "*.exe",
-        "*.dll",
-        "*.obj",
-        "*.o",
-        "*.a",
-        "*.lib",
-        "*.so",
-        "*.dylib",
-        "*.ncb",
-        "*.sdf",
-        "*.suo",
-        "*.pdb",
-        "*.idb",
-        ".DS_Store",
-        "*.class",
-        "*.psd",
-        "*.db",
-        "*.sublime-workspace",
-        ".coverage",
-        "nosetests.xml",
-        "*.bak"
-    ]
+	"ensure_newline_at_eof_on_save": true,
+	"file_exclude_patterns":
+	[
+		"*.pyc",
+		"*.pyo",
+		"*.exe",
+		"*.dll",
+		"*.obj",
+		"*.o",
+		"*.a",
+		"*.lib",
+		"*.so",
+		"*.dylib",
+		"*.ncb",
+		"*.sdf",
+		"*.suo",
+		"*.pdb",
+		"*.idb",
+		".DS_Store",
+		"*.class",
+		"*.psd",
+		"*.db",
+		"*.sublime-workspace",
+		".coverage",
+		"nosetests.xml",
+		"*.bak",
+		"*.min.js",
+		"*.min.css"
+	],
+	"folder_exclude_patterns":
+	[
+		".svn",
+		".git",
+		".hg",
+		"CVS",
+		"htmlcov",
+		".tox",
+		"dist",
+		"build",
+		"node_modules",
+		"CACHE",
+		"*.egg-info",
+		"*.egg",
+		".vagrant"
+	],
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"pep8_ignore":
+	[
+		"E501"
+	],
+	"soda_classic_tabs": false,
+	"trim_trailing_white_space_on_save": true
 }
