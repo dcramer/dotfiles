@@ -46,3 +46,5 @@
   default = matching
 [branch]
 	autosetuprebase = always
+[help]
+	autocorrect = 1
