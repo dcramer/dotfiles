@@ -219,7 +219,7 @@ if [ `uname` == "Darwin" ]; then
 fi;
 
 
-[[ -s "~/.rvm/scripts/rvm" ]] && source "~/.rvm/scripts/rvm"  # This loads RVM into a shell session.
+[[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm  # This loads RVM into a shell session.
 
 export CHEF_USER=zeeg
 
