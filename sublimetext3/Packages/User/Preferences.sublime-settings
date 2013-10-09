@@ -26,7 +26,8 @@
 		"nosetests.xml",
 		"*.bak",
 		"*.min.js",
-		"*.min.css"
+		"*.min.css",
+		".phutil_module_cache"
 	],
 	"folder_exclude_patterns":
 	[
@@ -37,7 +38,6 @@
 		"htmlcov",
 		".tox",
 		"dist",
-		"build",
 		"node_modules",
 		"CACHE",
 		"*.egg-info",
