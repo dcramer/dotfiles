@@ -42,7 +42,8 @@
 		"CACHE",
 		"*.egg-info",
 		"*.egg",
-		".vagrant"
+		".vagrant",
+		"docs/html"
 	],
 	"ignored_packages":
 	[
