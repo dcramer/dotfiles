@@ -2,13 +2,3 @@
 # This hook is run after every virtualenv is activated.
 
 export PS1=$PROMPT
-
-PROJECT_DIR="$HOME/Development/$(basename $VIRTUAL_ENV)"
-if [ -d $PROJECT_DIR ]; then
-    # If we aren't already within the project dir, cd into it
-    if [[ ! `pwd` == "$PROJECT_DIR*" ]]; then
-        export PRE_VENV_ACTIVATE_DIR=`pwd`
-        cd "$PROJECT_DIR"
-    fi
-fi
-unset PROJECT_DIR
