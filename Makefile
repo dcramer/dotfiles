@@ -1,5 +1,5 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin install-vcprompt install-git
+		 install-subl install-bin install-vcprompt install-git install-hg
 
 install-vcprompt:
 	@rm -rf /tmp/vcprompt
@@ -12,6 +12,9 @@ install-vcprompt:
 install-git:
 	ln -fs `pwd`/git/gitconfig ~/.gitconfig
 	curl -o ~/.git-completion.bash https://github.com/git/git/raw/master/contrib/completion/git-completion.bash -OL
+
+install-hg:
+	ln -fs `pwd`/hg/hgrc ~/.hgrc
 
 install-bin:
 	mkdir -p ~/bin/

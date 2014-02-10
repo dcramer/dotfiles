@@ -1,0 +1,6 @@
+[ui]
+username = David Cramer <dcramer@gmail.com>
+
+[extensions]
+shelve =
+purge =
