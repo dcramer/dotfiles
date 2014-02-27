@@ -1,6 +1,8 @@
 {
 	"installed_packages":
 	[
+		"GitGutter",
+		"Package Control",
 		"SublimeLinter",
 		"SublimeLinter-pep8",
 		"SublimeLinter-pyflakes"
