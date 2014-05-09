@@ -1,7 +1,9 @@
 {
 	"installed_packages":
 	[
+		"DashDoc",
 		"GitGutter",
+		"LESS",
 		"Package Control",
 		"SublimeLinter",
 		"SublimeLinter-pep8",

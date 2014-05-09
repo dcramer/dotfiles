@@ -1,4 +1,5 @@
 {
+	"color_scheme": "Packages/User/Monokai (SL).tmTheme",
 	"ensure_newline_at_eof_on_save": true,
 	"file_exclude_patterns":
 	[
@@ -11,6 +12,7 @@
 		"*.a",
 		"*.lib",
 		"*.so",
+		"*.mo",
 		"*.dylib",
 		"*.ncb",
 		"*.sdf",
@@ -43,7 +45,8 @@
 		"*.egg-info",
 		"*.egg",
 		".vagrant",
-		"docs/html"
+		"docs/html",
+		"vendor"
 	],
 	"font_size": 12,
 	"ignored_packages":
