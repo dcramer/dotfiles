@@ -11,7 +11,7 @@ history = os.path.expanduser("~/.pythonhist")
 if os.path.exists(history):
     try:
         readline.read_history_file(history)
-    except IOError, e:
+    except IOError:
         print "Failed to read %r: %s" % (history, e)
 
 readline.set_history_length(1024 * 5)
