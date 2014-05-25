@@ -2,6 +2,8 @@
 
 # Inspired by https://github.com/dag/dotfiles/blob/master/python/.pythonrc
 
+from __future__ import print_statement
+
 import os
 import readline
 
@@ -12,7 +14,7 @@ if os.path.exists(history):
     try:
         readline.read_history_file(history)
     except IOError:
-        print "Failed to read %r: %s" % (history, e)
+        print("Failed to read %r: %s" % (history, e))
 
 readline.set_history_length(1024 * 5)
 
