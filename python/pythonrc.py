@@ -2,7 +2,7 @@
 
 # Inspired by https://github.com/dag/dotfiles/blob/master/python/.pythonrc
 
-from __future__ import print_statement
+from __future__ import print_function
 
 import os
 import readline
