@@ -115,7 +115,7 @@ export GIT_EDITOR=$SVN_EDITOR
 
 export LIBTOOLIZE=glibtoolize
 
-export PATH=./node_modules/.bin:$HOME/.rvm/bin:/usr/local/share/npm/bin/:~/node_modules/.bin:~/pear/bin:~/bin:/usr/local/bin:/usr/local/sbin:$PATH
+export PATH=./node_modules/.bin:$HOME/.rvm/bin:/usr/local/share/npm/bin:~/node_modules/.bin:~/pear/bin:~/bin:/usr/local/bin:/usr/local/sbin:$PATH
 export GOPATH=~/Development/go
 
 # python
