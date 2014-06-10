@@ -41,7 +41,7 @@
 		".tox",
 		"dist",
 		"node_modules",
-		"CACHE",
+		"static/CACHE",
 		"*.egg-info",
 		"*.egg",
 		".vagrant",
