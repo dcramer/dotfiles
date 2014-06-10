@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# identical to pip except that we disable virtualenv requirement
+PIP_REQUIRE_VIRTUALENV="" pip "$@"
