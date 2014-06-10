@@ -1,6 +1,9 @@
 [ui]
 username = David Cramer <dcramer@gmail.com>
 
+[alias]
+brebase = rebase --keepbranches --dest $1
+
 [extensions]
 shelve =
 purge =
