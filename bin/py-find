@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+if [ -z $1 ]; then
+	echo "Usage: py-find [python.module]"
+	exit 1
+fi
+
+x=`python -c "import $1; print $1.__file__" | sed 's/\.pyc$/\.py/'`;
+if [ $? -ne 0 ]; then
+	exit $?
+fi
+grep -q "__init__.py$" <<< $x && echo `dirname $x` || echo $x

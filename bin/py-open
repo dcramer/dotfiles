@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+if [ -z $1 ]; then
+	echo "Usage: py-open [python.module]"
+	exit 1
+fi
+
+if [ -z $PYOPEN_CMD ];
+  PYOPEN_CMD=$EDITOR
+fi
+
+$PYOPEN_CMD `py-find $@`
