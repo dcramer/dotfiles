@@ -1,5 +1,6 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin install-vcprompt install-git install-hg
+		 install-subl install-bin install-vcprompt install-git install-hg \
+		 install-fish
 
 install-vcprompt:
 	@rm -rf /tmp/vcprompt
@@ -37,3 +38,7 @@ ifeq ($(shell uname),Darwin)
 	ln -fs `pwd`/sublimetext3/Packages/User/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/
 	ln -fs "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
 endif
+
+install-fish:
+	mkdir -p ~/.config/fish/
+	ln -fs `pwd`/fish/config.fish ~/.config/fish/config.fish
