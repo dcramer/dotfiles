@@ -18,8 +18,8 @@ install-hg:
 	ln -fs `pwd`/hg/hgrc ~/.hgrc
 
 install-bin:
-	mkdir -p ~/bin/
-	ln -fs `pwd`/bin/* ~/bin/
+	mkdir -p ~/.bin/
+	ln -fs `pwd`/bin/* ~/.bin/
 
 install-bash:
 	ln -fs `pwd`/bash/bashrc ~/.bash_profile
@@ -42,3 +42,8 @@ endif
 install-fish:
 	mkdir -p ~/.config/fish/
 	ln -fs `pwd`/fish/config.fish ~/.config/fish/config.fish
+
+install-zsh:
+	ln -fs `pwd`/zsh/zshrc ~/.zshrc
+	# mkdir -p ~/.zsh-extras/
+	# [ ! -e ~/.zsh-extras/zsh-autosuggestions ] && git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-extras/zsh-autosuggestions
