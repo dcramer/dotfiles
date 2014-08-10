@@ -57,6 +57,9 @@ export PATH="./node_modules/.bin:$HOME/.rvm/bin:$HOME/.bin:/usr/local/bin:/usr/b
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
+# Don't error if globbing fails; just leave the globbing chars in.
+setopt nonomatch
+
 # Preferred editor for local and remote sessions
 export EDITOR=nano
 export PYOPEN_CMD=subl
