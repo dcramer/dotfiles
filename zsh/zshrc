@@ -45,7 +45,7 @@ ZSH_THEME="cramer"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(brew fabric gem gitfast knife npm pip python redis-cli virtualenvwrapper)
+plugins=(brew fabric gem gitfast knife history-substring-search npm pip python redis-cli virtualenvwrapper)
 
 source $ZSH/oh-my-zsh.sh
 
