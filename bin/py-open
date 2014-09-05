@@ -5,7 +5,7 @@ if [ -z $1 ]; then
 	exit 1
 fi
 
-if [ -z $PYOPEN_CMD ];
+if [ -z $PYOPEN_CMD ]; then
   PYOPEN_CMD=$EDITOR
 fi
 
