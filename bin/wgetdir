@@ -2,4 +2,4 @@
 #/ Usage: wgetdir <url>
 #/ Downloads all subpaths linked at location.
 
-wget -r -nH --no-parent --reject "index.html*" $@
+wget -r --continue -nH --no-parent --reject "index.html*" $@
