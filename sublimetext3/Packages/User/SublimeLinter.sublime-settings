@@ -7,9 +7,23 @@
         "gutter_theme_excludes": [],
         "lint_mode": "background",
         "linters": {
-            "pep8": {
-                "@python": "2.7",
+            "jshint": {
                 "@disable": false,
+                "args": [],
+                "excludes": [
+                    "*.jsx"
+                ]
+            },
+            "jsxhint": {
+                "@disable": false,
+                "args": [
+                    "--jsx-only"
+                ],
+                "excludes": []
+            },
+            "pep8": {
+                "@disable": false,
+                "@python": "2.7",
                 "args": [],
                 "excludes": [],
                 "ignore": "E501",
@@ -17,14 +31,15 @@
                 "select": ""
             },
             "pyflakes": {
-                "@python": "2.7",
                 "@disable": false,
+                "@python": "2.7",
                 "args": [],
                 "excludes": []
             }
         },
         "mark_style": "outline",
         "no_column_highlights_line": false,
+        "passive_warnings": false,
         "paths": {
             "linux": [],
             "osx": [

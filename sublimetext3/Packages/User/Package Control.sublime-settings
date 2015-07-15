@@ -1,13 +1,27 @@
 {
 	"auto_upgrade_last_run": null,
+	"in_process_packages":
+	[
+	],
 	"installed_packages":
 	[
+		"Better CoffeeScript",
+		"CSS3",
+		"Darkula Color Scheme",
 		"DashDoc",
+		"Dracula Color Scheme",
 		"GitGutter",
+		"JSX",
 		"LESS",
+		"Material Theme",
 		"Package Control",
+		"Predawn",
+		"SideBarEnhancements",
 		"SublimeLinter",
+		"SublimeLinter-jshint",
+		"SublimeLinter-jsxhint",
 		"SublimeLinter-pep8",
-		"SublimeLinter-pyflakes"
+		"SublimeLinter-pyflakes",
+		"Theme - Carmesim"
 	]
 }
