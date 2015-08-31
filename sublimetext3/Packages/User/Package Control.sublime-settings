@@ -18,8 +18,7 @@
 		"Predawn",
 		"SideBarEnhancements",
 		"SublimeLinter",
-		"SublimeLinter-jshint",
-		"SublimeLinter-jsxhint",
+		"SublimeLinter-contrib-eslint",
 		"SublimeLinter-pep8",
 		"SublimeLinter-pyflakes",
 		"Theme - Carmesim"
