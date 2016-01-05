@@ -84,7 +84,7 @@
 	"sidebar_default": true,
 	"soda_classic_tabs": false,
 	"tabs_small": true,
-	"theme": "predawn-DEV.sublime-theme",
+	"theme": "predawn.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
 	"word_wrap": false
