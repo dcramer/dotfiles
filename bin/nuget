@@ -1,0 +1,8 @@
+#!/bin/bash -eux
+
+if [ ! -e ~/.nuget/nuget.exe ]; then
+    echo "Unable to find nuget.exe! Run `make install-nuget` from dotfiles.";
+    exit 1;
+fi
+
+mono --runtime=v4.0 ~/.nuget/nuget.exe $*

@@ -1,6 +1,6 @@
 install: install-bash install-virtualenvwrapper install-pythonrc \
 		 install-subl install-bin install-vcprompt install-git install-hg \
-		 install-fish
+		 install-fish install-nuget
 
 install-vcprompt:
 	@rm -rf /tmp/vcprompt
@@ -49,3 +49,7 @@ install-zsh:
 	[ -e ~/.oh-my-zsh ] && ln -fs `pwd`/zsh/themes/* ~/.oh-my-zsh/themes/
 	# mkdir -p ~/.zsh-extras/
 	# [ ! -e ~/.zsh-extras/zsh-autosuggestions ] && git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-extras/zsh-autosuggestions
+
+install-nuget:
+	mkdir -p ~/.nuget
+	wget -O ~/.nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
