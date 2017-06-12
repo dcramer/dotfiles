@@ -107,7 +107,7 @@ export IGNOREEOF=1
 export LESS=FRSX
 
 export EDITOR=nano
-export PYOPEN_CMD=atom
+export PYOPEN_CMD=subl
 export SVN_EDITOR=$EDITOR
 export GIT_EDITOR=$SVN_EDITOR
 
@@ -212,6 +212,10 @@ fi;
 
 [[ -s ~/.rvm/scripts/rvm ]] && source ~/.rvm/scripts/rvm  # This loads RVM into a shell session.
 
+# NVM
+[[ -s /usr/local/opt/nvm/nvm.sh ]] && source /usr/local/opt/nvm/nvm.sh
+export NVM_DIR="$HOME/.nvm"
+
 export CHEF_USER=zeeg
 
 # AWS tooling
@@ -219,4 +223,13 @@ export EC2_HOME="/usr/local/Cellar/ec2-api-tools/1.6.12.0/libexec"
 export JAVA_HOME="$(/usr/libexec/java_home)"
 export AWS_RDS_HOME="/usr/local/Cellar/rds-command-line-tools/1.12.002/libexec"
 
+function highlight-it {
+ pbpaste -Prefer txt | pygmentize -f rtf -O 'ensurenl=False,style=tango,fontface=Operator Mono Book,fontsize=84' -l "$1" | pbcopy
+}
+
+. /usr/local/etc/bash_completion.d/*
+
 test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.bash
+
+# I dont care enough to figure this out right now
+export CRYPTOGRAPHY_ALLOW_OPENSSL_098=1
