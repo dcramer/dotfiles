@@ -1,0 +1,16 @@
+#!/bin/bash -eu
+# Reset routing table on OSX
+
+INTERFACE=${1:-en0}
+
+echo "Flushing routes"
+for i in {0..4}; do
+  sudo route -n flush # several times
+done
+
+echo "Bringing interface down..."
+sudo ifconfig $INTERFACE down
+sleep 1
+echo "Bringing interface back up..."
+sudo ifconfig $INTERFACE up
+sleep 1

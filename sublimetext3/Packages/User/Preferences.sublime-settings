@@ -2,7 +2,7 @@
 	"caret_extra_width": 1,
 	"caret_style": "phase",
 	"close_windows_when_empty": false,
-	"color_scheme": "Packages/User/SublimeLinter/predawn (SL).tmTheme",
+	"color_scheme": "Packages/Material Theme/schemes/Material-Theme-Darker.tmTheme",
 	"copy_with_empty_selection": false,
 	"drag_text": false,
 	"draw_minimap_border": true,
@@ -56,13 +56,14 @@
 		".vagrant",
 		"docs/html",
 		"vendor",
-		"static-built"
+		"static-built",
+		"getsentry/static"
 	],
 	"font_options":
 	[
 		"no_round"
 	],
-	"font_size": 13,
+	"font_size": 16,
 	"highlight_line": true,
 	"ignored_packages":
 	[
@@ -84,7 +85,7 @@
 	"sidebar_default": true,
 	"soda_classic_tabs": false,
 	"tabs_small": true,
-	"theme": "predawn.sublime-theme",
+	"theme": "Material-Theme-Darker.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
 	"word_wrap": false
