@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+
+rsync -avzhe ssh --progress ~/Music/iTunes/iTunes\ Media/Music drobo5n.local:/mnt/DroboFS/Shares/Public/
