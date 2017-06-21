@@ -56,8 +56,9 @@
 		".vagrant",
 		"docs/html",
 		"vendor",
-		"static-built",
-		"getsentry/static"
+		"getsentry/static/dist/*",
+		"getsentry/getsentry/static/*",
+		"static-built/*"
 	],
 	"font_options":
 	[

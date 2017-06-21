@@ -7,27 +7,14 @@
 	"installed_packages":
 	[
 		"Babel",
-		"Better CoffeeScript",
 		"CSS3",
-		"Darkula Color Scheme",
-		"DashDoc",
-		"Dracula Color Scheme",
 		"Elixir",
-		"GitGutter",
-		"isort",
-		"JsPrettier",
 		"JSX",
 		"LESS",
 		"Material Theme",
 		"Package Control",
-		"Predawn",
-		"Python Imports Sorter",
-		"PyYapf Python Formatter",
-		"SideBarEnhancements",
 		"SublimeLinter",
 		"SublimeLinter-contrib-eslint",
-		"SublimeLinter-pep8",
-		"SublimeLinter-pyflakes",
-		"Theme - Carmesim"
+		"SublimeLinter-pyflakes"
 	]
 }
