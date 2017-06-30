@@ -5,18 +5,22 @@
 from __future__ import print_function
 
 import os
-import readline
+try:
+    import readline
+except ImportError:
+    import traceback; traceback.print_exc()
+    history = None
+else:
+    readline.parse_and_bind('tab: complete')
+    history = os.path.expanduser("~/.pythonhist")
 
-readline.parse_and_bind('tab: complete')
-history = os.path.expanduser("~/.pythonhist")
+    if os.path.exists(history):
+        try:
+            readline.read_history_file(history)
+        except IOError:
+            print("Failed to read %r: %s" % (history, e))
 
-if os.path.exists(history):
-    try:
-        readline.read_history_file(history)
-    except IOError:
-        print("Failed to read %r: %s" % (history, e))
-
-readline.set_history_length(1024 * 5)
+    readline.set_history_length(1024 * 5)
 
 def write_history(history):
     def wrapped():
@@ -25,4 +29,5 @@ def write_history(history):
     return wrapped
 
 import atexit
-atexit.register(write_history(history))
+if history:
+    atexit.register(write_history(history))
