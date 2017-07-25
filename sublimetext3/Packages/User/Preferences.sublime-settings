@@ -36,6 +36,8 @@
 		"*.bak",
 		"*.min.js",
 		"*.min.css",
+		"*.map",
+		"*.hot-update.*",
 		"coverage.xml",
 		".phutil_module_cache"
 	],
@@ -58,7 +60,9 @@
 		"vendor",
 		"getsentry/static/dist/*",
 		"getsentry/getsentry/static/*",
-		"static-built/*"
+		"static-built/*",
+		".mypy_cache",
+		".vscode"
 	],
 	"font_options":
 	[
@@ -68,6 +72,14 @@
 	"highlight_line": true,
 	"ignored_packages":
 	[
+		"DashDoc",
+		"Dracula Color Scheme",
+		"GitGutter",
+		"Predawn",
+		"Python Imports Sorter",
+		"PyYapf Python Formatter",
+		"SideBarEnhancements",
+		"SublimeLinter-pep8",
 		"Vintage"
 	],
 	"match_brackets_content": false,
