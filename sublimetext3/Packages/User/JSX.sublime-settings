@@ -1,4 +1,6 @@
 // These settings override both User and Default settings for the JSX syntax
 {
-    "tab_size": 2
+    "translate_tabs_to_spaces": true,
+    "tab_size": 2,
+    "ensure_newline_at_eof_on_save": true
 }

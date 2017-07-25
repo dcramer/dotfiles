@@ -13,6 +13,7 @@
 		"LESS",
 		"Material Theme",
 		"Package Control",
+		"SingleTrailingNewLine",
 		"SublimeLinter",
 		"SublimeLinter-contrib-eslint",
 		"SublimeLinter-pyflakes"
