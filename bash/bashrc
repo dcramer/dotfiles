@@ -184,6 +184,12 @@ function tfree() {
   top -l1 -s0 | head -n11
 }
 
+if [ `uname` == "Darwin" ]; then
+  # use temp folder for screenshots
+  mkdir -p /tmp/screenshots
+  defaults write com.apple.screencapture location /tmp/screenshots
+fi
+
 if [ -e "$HOME/.local-bashrc" ]; then
   source "$HOME/.local-bashrc"
 fi
@@ -233,3 +239,9 @@ test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_i
 
 # I dont care enough to figure this out right now
 export CRYPTOGRAPHY_ALLOW_OPENSSL_098=1
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/dcramer/google-cloud-sdk/path.bash.inc' ]; then source '/Users/dcramer/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/dcramer/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/dcramer/google-cloud-sdk/completion.bash.inc'; fi
