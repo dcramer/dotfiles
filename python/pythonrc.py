@@ -14,7 +14,7 @@ def setup_history():
     if os.path.exists(history):
         try:
             readline.read_history_file(history)
-        except IOError:
+        except IOError as e:
             print("Failed to read %r: %s" % (history, e))
 
     readline.set_history_length(1024 * 5)
