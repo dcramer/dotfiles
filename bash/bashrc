@@ -103,6 +103,8 @@ else
   alias ls='ls --color=auto'
 fi
 
+export SCREENSHOTS_PATH=~/Documents/Screenshots
+
 export IGNOREEOF=1
 export LESS=FRSX
 
@@ -185,9 +187,8 @@ function tfree() {
 }
 
 if [[ `uname` == "Darwin" ]]; then
-  # use temp folder for screenshots
-  mkdir -p /tmp/screenshots
-  defaults write com.apple.screencapture location /tmp/screenshots
+  mkdir -p $SCREENSHOTS_PATH
+  defaults write com.apple.screencapture location $SCREENSHOTS_PATH
 fi
 
 if [[ -e "$HOME/.local-bashrc" ]]; then
