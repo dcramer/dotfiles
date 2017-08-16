@@ -4,7 +4,7 @@
 # https://github.com/mitsuhiko/dotfiles/blob/master/bash/bashrc
 
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+[[ -z "$PS1" ]] && return
 
 DEFAULT_COLOR="[00;1m"
 GRAY_COLOR="[37;1m"
@@ -13,7 +13,7 @@ GREEN_COLOR="[32;1m"
 CYAN_COLOR="[36;1m"
 ORANGE_COLOR="[33;1m"
 RED_COLOR="[31;1m"
-if [ `id -u` == '0' ]; then
+if [[ `id -u` == '0' ]]; then
   USER_COLOR=$RED_COLOR
 else
   USER_COLOR=$ORANGE_COLOR
@@ -23,14 +23,14 @@ VCPROMPT_EXECUTABLE=/usr/local/bin/vcprompt
 SSHUTTLE_EXECUTABLE=/usr/local/bin/sshuttle
 
 function vcprompt() {
-  if [ -e "$VCPROMPT_EXECUTABLE" ]; then
+  if [[ -e "$VCPROMPT_EXECUTABLE" ]]; then
     $VCPROMPT_EXECUTABLE -f $' on \033[1;34m%n\033[00;1m:\033[0;37m%[unknown]b\033[32;1m%m%u'
   fi
 }
 
 function lastcommandfailed() {
   code=$?
-  if [ $code != 0 ]; then
+  if [[ $code != 0 ]]; then
     echo -n $'\033[37;1m exited \033[31;1m'
     echo -n $code
     echo -n $'\033[37;1m'
@@ -52,7 +52,7 @@ function backgroundjobs() {
 }
 
 function activevirtualenv() {
-  if [ -n "$VIRTUAL_ENV" ]; then
+  if [[ -n "$VIRTUAL_ENV" ]]; then
       echo -n $'\033[00;1m:\033[36;1m'
       echo -n "$(basename $VIRTUAL_ENV)"
   fi
@@ -70,7 +70,7 @@ export BASEPROMPT='\n\e${USER_COLOR}\u\
 \e${GRAY_COLOR}$(vcprompt)\
 \e${DEFAULT_COLOR}'
 
-if [ `uname` == "Darwin" ]; then
+if [[ `uname` == "Darwin" ]]; then
   export BASEPROMPT='\n\e${USER_COLOR}\u\
 `activevirtualenv` \
 \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
@@ -95,7 +95,7 @@ export TERM=xterm-color
 export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 
 export CLICOLOR=1
-if [ `uname` == "Darwin" ]; then
+if [[ `uname` == "Darwin" ]]; then
   export LSCOLORS=ExGxFxDxCxHxHxCbCeEbEb
   export LC_CTYPE=en_US.utf-8
   alias free=tfree
@@ -121,7 +121,7 @@ export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
 # virtualenvwrapper and pip
-if [ `id -u` != '0' ]; then
+if [[ `id -u` != '0' ]]; then
   export VIRTUAL_ENV_DISABLE_PROMPT=1
   export VIRTUALENV_USE_DISTRIBUTE=1
   export WORKON_HOME=$HOME/.virtualenvs
@@ -129,13 +129,13 @@ if [ `id -u` != '0' ]; then
   export PIP_REQUIRE_VIRTUALENV=true
   export PIP_RESPECT_VIRTUALENV=true
   #export PIP_USE_MIRRORS=true
-  if [ -e "/usr/local/bin/virtualenvwrapper.sh" ]; then
+  if [[ -e "/usr/local/bin/virtualenvwrapper.sh" ]]; then
     source /usr/local/bin/virtualenvwrapper.sh
   fi
 fi
 
 # Enable hub (GitHub CLI)
-if [ -e $(which hub) ]; then
+if [[ -e $(which hub) ]]; then
   alias git=hub
 fi
 
@@ -184,31 +184,32 @@ function tfree() {
   top -l1 -s0 | head -n11
 }
 
-if [ `uname` == "Darwin" ]; then
+if [[ `uname` == "Darwin" ]]; then
   # use temp folder for screenshots
   mkdir -p /tmp/screenshots
   defaults write com.apple.screencapture location /tmp/screenshots
 fi
 
-if [ -e "$HOME/.local-bashrc" ]; then
+if [[ -e "$HOME/.local-bashrc" ]]; then
   source "$HOME/.local-bashrc"
 fi
 
 # Use git-completion if available
-if [ -e "$HOME/.git-completion.bash" ]; then
+if [[ -e "$HOME/.git-completion.bash" ]]; then
   source "$HOME/.git-completion.bash"
-fi;
+fi
 
 # Use bash-completion, if available
-if [ -f /etc/bash_completion ]; then
+if [[ -f /etc/bash_completion ]]; then
   . /etc/bash_completion
 fi
-if [ -f /usr/local/etc/bash_completion ]; then
+
+if [[ -f /usr/local/etc/bash_completion ]]; then
   . /usr/local/etc/bash_completion
 fi
 
 # GRC support
-if [ `uname` == "Darwin" ]; then
+if [[ `uname` == "Darwin" ]]; then
   grc_bash="`brew --prefix grc`/etc/grc.bashrc"
   if [ -e "$grc_bash" ]; then
     source "$grc_bash"
@@ -226,14 +227,20 @@ export CHEF_USER=zeeg
 
 # AWS tooling
 export EC2_HOME="/usr/local/Cellar/ec2-api-tools/1.6.12.0/libexec"
-export JAVA_HOME="$(/usr/libexec/java_home)"
 export AWS_RDS_HOME="/usr/local/Cellar/rds-command-line-tools/1.12.002/libexec"
+
+if [[ -e /usr/libexec/java_home ]]; then
+  export JAVA_HOME="$(/usr/libexec/java_home)"
+fi
+
 
 function highlight-it {
  pbpaste -Prefer txt | pygmentize -f rtf -O 'ensurenl=False,style=tango,fontface=Operator Mono Book,fontsize=84' -l "$1" | pbcopy
 }
 
-. /usr/local/etc/bash_completion.d/*
+if [[ -d /usr/local/etc/bash_completion.d ]]; then
+  . /usr/local/etc/bash_completion.d/*
+fi
 
 test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.bash
 
