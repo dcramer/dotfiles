@@ -1,6 +1,8 @@
-install: install-bash install-virtualenvwrapper install-pythonrc \
+install-user: install-bash install-virtualenvwrapper install-pythonrc \
 		 install-subl install-bin install-vcprompt install-git install-hg \
-		 install-fish install-nuget
+		 install-fish install-nuget install-ssh
+
+install-global: install-user install-ssh
 
 install-vcprompt:
 	@rm -rf /tmp/vcprompt
@@ -53,3 +55,10 @@ install-zsh:
 install-nuget:
 	mkdir -p ~/.nuget
 	wget -O ~/.nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+
+install-ssh:
+ifeq ($(shell uname),Darwin)
+	sudo cp ssh/* /etc/ssh/
+	sudo chmod 755 /etc/ssh/ssh_config
+	sudo chmod 644 /etc/ssh/sshd_config
+endif
