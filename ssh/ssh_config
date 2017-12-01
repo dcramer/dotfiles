@@ -52,7 +52,7 @@
 ControlPersist 5m
 
 Host *
-	SendEnv LANG LC_*
+    SendEnv LANG LC_*
     ForwardAgent yes
     ForwardX11 no
     AddKeysToAgent yes
