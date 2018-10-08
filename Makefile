@@ -25,7 +25,6 @@ install-bin:
 
 install-bash:
 	ln -fs `pwd`/bash/bashrc ~/.bash_profile
-	ln -fs ~/.bash_profile ~/.bashrc
 	@echo "Old .bash_profile saved as .bash_profile.old"
 
 install-virtualenvwrapper:
