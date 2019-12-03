@@ -19,6 +19,16 @@ else
   USER_COLOR=$ORANGE_COLOR
 fi
 
+# detect os/terminal
+IS_MACOS=false
+IS_WSL=false
+if [[ "$OSTYPE" == "darwin" ]]; then
+    IS_MACOS=true
+fi
+if [[ $(cat /proc/version | grep microsoft) ]]; then
+    IS_WSL=true
+fi
+
 VCPROMPT_EXECUTABLE=/usr/local/bin/vcprompt
 SSHUTTLE_EXECUTABLE=/usr/local/bin/sshuttle
 
@@ -70,7 +80,7 @@ export BASEPROMPT='\n\e${USER_COLOR}\u\
 \e${GRAY_COLOR}$(vcprompt)\
 \e${DEFAULT_COLOR}'
 
-if [[ `uname` == "Darwin" ]]; then
+if [[ $IS_MACOS || $IS_WSL ]]; then
   export BASEPROMPT='\n\e${USER_COLOR}\u\
 `activevirtualenv` \
 \e${GRAY_COLOR}in \e${GREEN_COLOR}\w\
@@ -92,7 +102,8 @@ $ "
 export PS1=$PROMPT
 
 export TERM=xterm-color
-export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
+# TODO: this is deprecated
+# export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 
 export CLICOLOR=1
 if [[ `uname` == "Darwin" ]]; then
@@ -186,7 +197,7 @@ function tfree() {
   top -l1 -s0 | head -n11
 }
 
-if [[ `uname` == "Darwin" ]]; then
+if [[ $IS_MACOS ]]; then
   mkdir -p $SCREENSHOTS_PATH
   defaults write com.apple.screencapture location $SCREENSHOTS_PATH
 fi
