@@ -6,4 +6,4 @@ You will need Armin's vcprompt for the bash prompt: https://bitbucket.org/mitsuh
 
 ::
 
-    git clone git://github.com/dcramer/dotfiles.git && cd dotfiles && make install
+    git clone git://github.com/dcramer/dotfiles.git && cd dotfiles && make
