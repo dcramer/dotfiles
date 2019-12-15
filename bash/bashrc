@@ -25,7 +25,7 @@ IS_WSL=false
 if [[ "$OSTYPE" == "darwin" ]]; then
     IS_MACOS=true
 fi
-if [[ $(cat /proc/version | grep microsoft) ]]; then
+if [[ -e /proc/version ]] && [[ $(cat /proc/version | grep microsoft) ]]; then
     IS_WSL=true
 fi
 
