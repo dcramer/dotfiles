@@ -30,7 +30,6 @@ if [[ $(cat /proc/version | grep microsoft) ]]; then
 fi
 
 VCPROMPT_EXECUTABLE=/usr/local/bin/vcprompt
-SSHUTTLE_EXECUTABLE=/usr/local/bin/sshuttle
 
 function vcprompt() {
   if [[ -e "$VCPROMPT_EXECUTABLE" ]]; then
@@ -106,7 +105,7 @@ export TERM=xterm-color
 # export GREP_OPTIONS='--color=auto' GREP_COLOR='1;32'
 
 export CLICOLOR=1
-if [[ `uname` == "Darwin" ]]; then
+if [[ $IS_MACOS ]]; then
   export LSCOLORS=ExGxFxDxCxHxHxCbCeEbEb
   export LC_CTYPE=en_US.utf-8
   alias free=tfree
@@ -185,14 +184,6 @@ alias scpresume='rsync --partial --progress --progress --stats'
 
 alias vag='vagrant $@'
 
-function ghettovpn() {
-  $SSHUTTLE_EXECUTABLE -r "$VPN_HOST" 10/8
-}
-
-function cleanpycs() {
-  find . -name "*.pyc" -exec rm -rf {} \;
-}
-
 function tfree() {
   top -l1 -s0 | head -n11
 }
@@ -213,15 +204,15 @@ fi
 
 # Use bash-completion, if available
 if [[ -f /etc/bash_completion ]]; then
-  . /etc/bash_completion
+  source /etc/bash_completion
 fi
 
 if [[ -f /usr/local/etc/bash_completion ]]; then
-  . /usr/local/etc/bash_completion
+  source /usr/local/etc/bash_completion
 fi
 
 # GRC support
-if [[ `uname` == "Darwin" ]]; then
+if [[ $IS_MACOS ]]; then
   grc_bash="`brew --prefix grc`/etc/grc.bashrc"
   if [ -e "$grc_bash" ]; then
     source "$grc_bash"
@@ -251,7 +242,7 @@ function highlight-it {
 }
 
 if [[ -d /usr/local/etc/bash_completion.d ]]; then
-  . /usr/local/etc/bash_completion.d/*
+  source /usr/local/etc/bash_completion.d/*
 fi
 
 test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.bash
@@ -260,24 +251,30 @@ test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_i
 export CRYPTOGRAPHY_ALLOW_OPENSSL_098=1
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/dcramer/google-cloud-sdk/path.bash.inc' ]; then source '/Users/dcramer/google-cloud-sdk/path.bash.inc'; fi
+if [ -f '/Users/dcramer/google-cloud-sdk/path.bash.inc' ]; then
+    source '/Users/dcramer/google-cloud-sdk/path.bash.inc'
+fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/dcramer/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/dcramer/google-cloud-sdk/completion.bash.inc'; fi
+if [ -f '/Users/dcramer/google-cloud-sdk/completion.bash.inc' ]; then
+    source '/Users/dcramer/google-cloud-sdk/completion.bash.inc'
+fi
 
 if [[ -e $(which pyenv) ]]; then
+    echo "Initializing pyenv"
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi
 
 if [[ -e $(which direnv) ]]; then
+    echo "Initializing direnv"
     eval "$(direnv hook bash)"
 fi
 
 SSH_ENV="$HOME/.ssh/environment"
 
 function start_agent {
-    echo "Initialising new SSH agent..."
+    echo "Initializing new SSH agent..."
     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
     echo succeeded
     chmod 600 "${SSH_ENV}"
