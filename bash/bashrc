@@ -22,7 +22,7 @@ fi
 # detect os/terminal
 IS_MACOS=false
 IS_WSL=false
-if [[ "$OSTYPE" == "darwin" ]]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
     IS_MACOS=true
 fi
 if [[ -e /proc/version ]] && [[ $(cat /proc/version | grep microsoft) ]]; then
