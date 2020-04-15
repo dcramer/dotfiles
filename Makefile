@@ -48,6 +48,8 @@ install-zsh:
 	ln -fs `pwd`/zsh/zshrc ~/.zshrc
 	# TODO(dcramer): there must be a better way to do specify my own theme?
 	[ -e ~/.oh-my-zsh ] && ln -fs `pwd`/zsh/themes/* ~/.oh-my-zsh/themes/
+	mkdir -p ~/.config/
+	ln -fs `pwd`/zsh/zsh_plugins ~/.config/zsh_plugins
 	# mkdir -p ~/.zsh-extras/
 	# [ ! -e ~/.zsh-extras/zsh-autosuggestions ] && git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-extras/zsh-autosuggestions
 
