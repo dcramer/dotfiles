@@ -128,6 +128,10 @@ export LIBTOOLIZE=glibtoolize
 export PATH=./node_modules/.bin:$HOME/.rvm/bin:/usr/local/share/npm/bin:~/node_modules/.bin:~/pear/bin:~/.bin:/usr/local/bin:/usr/local/sbin:$PATH
 export GOPATH=~/Development/go
 
+# docker
+DOCKER_USER=zeeg99
+DOCKER_PASS=
+
 # python
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
@@ -145,6 +149,9 @@ if [[ `id -u` != '0' ]]; then
     source /usr/local/bin/virtualenvwrapper.sh
   fi
 fi
+
+# poetry
+export PATH="$HOME/.poetry/bin:$PATH"
 
 # Enable hub (GitHub CLI)
 if [[ -e $(which hub) ]]; then
@@ -298,3 +305,4 @@ if [[ $IS_MACOS = false ]]; then
         start_agent;
     fi
 fi
+
