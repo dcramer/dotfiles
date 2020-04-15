@@ -3,6 +3,7 @@
 	"bootstrapped": true,
 	"in_process_packages":
 	[
+		"SublimeLinter-contrib-eslint"
 	],
 	"installed_packages":
 	[
@@ -19,7 +20,7 @@
 		"PyYapf Python Formatter",
 		"SingleTrailingNewLine",
 		"SublimeLinter",
-		"SublimeLinter-contrib-eslint",
-		"SublimeLinter-pyflakes"
+		"SublimeLinter-pyflakes",
+		"SublimeLinter-eslint"
 	]
 }
