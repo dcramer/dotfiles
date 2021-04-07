@@ -106,3 +106,8 @@ export PATH="/usr/local/opt/ruby/bin:$PATH"
 # cargo
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="/usr/local/opt/llvm/bin:$PATH"
+
+# map ctrl+left and ctrl+right to universal behaviors
+bindkey -e
+bindkey '^[[1;9C' forward-word
+bindkey '^[[1;9D' backward-word
