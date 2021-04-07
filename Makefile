@@ -31,14 +31,17 @@ install-fish:
 	mkdir -p ~/.config/fish/
 	ln -fs `pwd`/fish/config.fish ~/.config/fish/config.fish
 
+bootstrap-zsh:
+	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	curl -sfL git.io/antibody | sudo sh -s - -b /usr/local/bin
+
 install-zsh:
-	# sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	mkdir -p `pwd`/.oh-my-zsh/
 	ln -fs `pwd`/zsh/zshrc ~/.zshrc
 	# TODO(dcramer): there must be a better way to do specify my own theme?
 	# [ -e ~/.oh-my-zsh ] && ln -fs `pwd`/zsh/themes/* ~/.oh-my-zsh/themes/
-	mkdir -p ~/.config/
-	on -fs `pwd`/zsh/themes/* ~/.config/zsh_custom/themes/
+	mkdir -p ~/.config/zsh_custom/themes/
+	ln -fs `pwd`/zsh/themes/* ~/.config/zsh_custom/themes/
 	ln -fs `pwd`/zsh/zsh_plugins ~/.config/zsh_plugins
 	# mkdir -p ~/.zsh-extras/
 	# [ ! -e ~/.zsh-extras/zsh-autosuggestions ] && git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-extras/zsh-autosuggestions
