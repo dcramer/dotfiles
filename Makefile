@@ -1,6 +1,6 @@
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-subl install-bin install-git install-hg \
-		 install-fish install-nuget install-ssh install-zsh
+		 install-nuget install-ssh install-zsh
 
 install-global: install-user install-ssh
 
