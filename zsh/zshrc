@@ -113,3 +113,10 @@ export PATH="/usr/local/opt/llvm/bin:$PATH"
 bindkey -e
 bindkey '^[[1;9C' forward-word
 bindkey '^[[1;9D' backward-word
+
+# pdm support
+if [ -n "$PYTHONPATH" ]; then
+    export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582':$PYTHONPATH
+else
+    export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
+fi
