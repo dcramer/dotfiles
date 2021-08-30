@@ -97,7 +97,9 @@ listening() {
 }
 
 # local commands
-export PATH="/Users/dcramer/.bin:$GOPATH/bin:$PATH"
+export PATH="$HOME/.bin:$HOME/.local/bin:$GOPATH/bin:$PATH"
+
+
 
 # various brew support
 export PATH="/usr/local/opt/gettext/bin:$PATH"
