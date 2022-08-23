@@ -62,8 +62,10 @@ eval "$(direnv hook zsh)"
 
 # poetry
 export POETRY_HOME=~/.poetry
+export POETRY_VIRTUALENVS_IN_PROJECT=1
 # poetry completions zsh > ~/.zfunc/_poetry
 export PATH="$POETRY_HOME/bin:$PATH"
+
 # fpath+=~/.zfunc
 
 # volta
@@ -120,3 +122,4 @@ if [ -n "$PYTHONPATH" ]; then
 else
     export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
 fi
+
