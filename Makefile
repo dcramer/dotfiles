@@ -1,5 +1,5 @@
 install-user: install-virtualenvwrapper install-pythonrc \
-		 install-subl install-bin install-git install-hg \
+		 install-bin install-git install-hg \
 		 install-nuget install-ssh install-zsh
 
 install-global: install-user install-ssh
@@ -20,12 +20,6 @@ install-virtualenvwrapper:
 
 install-pythonrc:
 	ln -fs `pwd`/python/pythonrc.py ~/.pythonrc.py
-
-install-subl:
-ifeq ($(shell uname),Darwin)
-	ln -fs `pwd`/sublimetext3/Packages/User/* ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/User/
-	ln -fs "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" /usr/local/bin/subl
-endif
 
 install-fish:
 	mkdir -p ~/.config/fish/

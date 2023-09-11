@@ -1,9 +1,0 @@
-{
-    "auto_format_on_save": true,
-    "prettier_options": {
-        "printWidth": 90,
-        "singleQuote": true,
-        "bracketSpacing": false,
-        "jsxBracketSameLine": true
-    }
-}
