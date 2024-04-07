@@ -116,21 +116,24 @@ bindkey '^[[1;9D' backward-word
 
 # pdm support
 if [ -n "$PYTHONPATH" ]; then
-    export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582':$PYTHONPATH
+    export PYTHONPATH='$HOME/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582':$PYTHONPATH
 else
-    export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
+    export PYTHONPATH='$HOME/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
 fi
 
+export FLYCTL_INSTALL="$HOME/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/Users/dcramer/Library/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
 # bun completions
-[ -s "/Users/dcramer/.bun/_bun" ] && source "/Users/dcramer/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
