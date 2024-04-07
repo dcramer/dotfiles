@@ -44,7 +44,7 @@ export GIT_EDITOR=$SVN_EDITOR
 export PYOPEN_CMD='code'
 
 # golang
-export GOPATH=~/Development/go
+export GOPATH=~/src/go
 
 # docker
 export DOCKER_USER=zeeg99
@@ -101,8 +101,6 @@ listening() {
 # local commands
 export PATH="$HOME/.bin:$HOME/.local/bin:$GOPATH/bin:$PATH"
 
-
-
 # various brew support
 export PATH="/usr/local/opt/gettext/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
@@ -123,3 +121,17 @@ else
     export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
 fi
 
+
+# pnpm
+export PNPM_HOME="/Users/dcramer/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+# bun completions
+[ -s "/Users/dcramer/.bun/_bun" ] && source "/Users/dcramer/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
