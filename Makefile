@@ -27,7 +27,7 @@ install-fish:
 
 bootstrap-zsh:
 	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-	curl -sfL git.io/antibody | sudo sh -s - -b /usr/local/bin
+	brew install antidote
 
 install-zsh:
 	mkdir -p `pwd`/.oh-my-zsh/
