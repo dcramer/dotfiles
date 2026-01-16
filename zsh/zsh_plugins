@@ -6,7 +6,6 @@ ohmyzsh/ohmyzsh path:plugins/docker
 ohmyzsh/ohmyzsh path:plugins/pip
 ohmyzsh/ohmyzsh path:plugins/python
 ohmyzsh/ohmyzsh path:plugins/pyenv
-ohmyzsh/ohmyzsh path:plugins/ssh-agent
 ohmyzsh/ohmyzsh path:plugins/sudo
 ohmyzsh/ohmyzsh path:plugins/vscode
 ohmyzsh/ohmyzsh path:plugins/z
