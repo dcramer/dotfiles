@@ -25,8 +25,16 @@ DRACULA_DISPLAY_TIME=${DRACULA_DISPLAY_TIME:-0}
 # Set to 1 to show the 'context' segment
 DRACULA_DISPLAY_CONTEXT=${DRACULA_DISPLAY_CONTEXT:-0}
 
-# Changes the arrow icon
-DRACULA_ARROW_ICON=${DRACULA_ARROW_ICON:-➜ }
+# Use ASCII-safe characters on Linux to avoid width calculation issues
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  DRACULA_ARROW_ICON=${DRACULA_ARROW_ICON:-➜ }
+  DRACULA_GIT_CLEAN_ICON=${DRACULA_GIT_CLEAN_ICON:-✔}
+  DRACULA_GIT_DIRTY_ICON=${DRACULA_GIT_DIRTY_ICON:-✗}
+else
+  DRACULA_ARROW_ICON=${DRACULA_ARROW_ICON:-> }
+  DRACULA_GIT_CLEAN_ICON=${DRACULA_GIT_CLEAN_ICON:-ok}
+  DRACULA_GIT_DIRTY_ICON=${DRACULA_GIT_DIRTY_ICON:-*}
+fi
 
 # function to detect if git has support for --no-optional-locks
 dracula_test_git_optional_lock() {
@@ -162,8 +170,8 @@ precmd() {
 
 PROMPT+='$DRACULA_GIT_STATUS'
 
-ZSH_THEME_GIT_PROMPT_CLEAN=") %F{green}%B✔ "
-ZSH_THEME_GIT_PROMPT_DIRTY=") %F{yellow}%B✗ "
+ZSH_THEME_GIT_PROMPT_CLEAN=") %F{green}%B${DRACULA_GIT_CLEAN_ICON} "
+ZSH_THEME_GIT_PROMPT_DIRTY=") %F{yellow}%B${DRACULA_GIT_DIRTY_ICON} "
 ZSH_THEME_GIT_PROMPT_PREFIX="%F{cyan}%B("
 ZSH_THEME_GIT_PROMPT_SUFFIX="%f%b"
 # }}}
