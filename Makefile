@@ -1,3 +1,6 @@
+IS_DARWIN := $(filter Darwin,$(shell uname))
+IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
+
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
 		 install-nuget install-zsh
@@ -27,7 +30,7 @@ install-fish:
 
 bootstrap-zsh:
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-ifeq ($(shell uname),Darwin)
+ifdef IS_DARWIN
 	brew install antidote
 else
 	git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
@@ -49,11 +52,7 @@ install-nuget:
 	wget -O ~/.nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 
 install-ssh:
-ifeq ($(shell uname),Darwin)
-	mkdir -p ~/.ssh
-	ln -fs `pwd`/ssh/config ~/.ssh/config
-	chmod 600 ~/.ssh/config
-else ifeq ($(shell grep -qi microsoft /proc/version 2>/dev/null && echo WSL),WSL)
+ifneq ($(or $(IS_DARWIN),$(IS_WSL)),)
 	mkdir -p ~/.ssh
 	ln -fs `pwd`/ssh/config ~/.ssh/config
 	chmod 600 ~/.ssh/config
