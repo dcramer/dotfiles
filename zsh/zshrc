@@ -5,8 +5,12 @@
 autoload -Uz compinit && compinit
 
 # Initialize antidote
-source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
-antidote load ~/.config/zsh_plugins
+if command -v brew &>/dev/null; then
+  source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+elif [[ -f ~/.antidote/antidote.zsh ]]; then
+  source ~/.antidote/antidote.zsh
+fi
+command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 
 # ZSH_THEME="dcramer"
 
@@ -54,7 +58,7 @@ export PYTHONSTARTUP="$HOME/.pythonrc.py"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # direnv
-eval "$(direnv hook zsh)"
+command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # poetry
 export POETRY_HOME=~/.poetry

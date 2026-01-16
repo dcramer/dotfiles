@@ -26,8 +26,12 @@ install-fish:
 	ln -fs `pwd`/fish/config.fish ~/.config/fish/config.fish
 
 bootstrap-zsh:
-	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+ifeq ($(shell uname),Darwin)
 	brew install antidote
+else
+	git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
+endif
 
 install-zsh:
 	mkdir -p `pwd`/.oh-my-zsh/
