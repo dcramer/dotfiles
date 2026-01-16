@@ -1,0 +1,8 @@
+Host 192.168.*
+    ForwardAgent yes
+
+Host *.local
+    ForwardAgent yes
+
+Host *
+    AddKeysToAgent yes

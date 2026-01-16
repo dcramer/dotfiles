@@ -50,7 +50,7 @@ install-nuget:
 
 install-ssh:
 ifeq ($(shell uname),Darwin)
-	sudo cp ssh/* /etc/ssh/
-	sudo chmod 755 /etc/ssh/ssh_config
-	sudo chmod 644 /etc/ssh/sshd_config
+	mkdir -p ~/.ssh
+	ln -fs `pwd`/ssh/config ~/.ssh/config
+	chmod 600 ~/.ssh/config
 endif
