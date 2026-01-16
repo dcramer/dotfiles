@@ -1,6 +1,9 @@
 Host 192.168.*
     ForwardAgent yes
 
+Host maximus
+    ForwardAgent yes
+
 Host *.local
     ForwardAgent yes
 
