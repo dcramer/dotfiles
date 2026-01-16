@@ -30,6 +30,9 @@ command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 
 ZSH_CUSTOM=~/.config/zsh_custom
 
+# Show user@hostname in prompt when connected via SSH
+export DRACULA_DISPLAY_CONTEXT=1
+
 export LANG=en_US.UTF-8
 
 export SCREENSHOTS_PATH=~/Documents/Screenshots
