@@ -9,6 +9,10 @@ fi
 # Initialize zsh completion system
 autoload -Uz compinit && compinit
 
+# Set up cache directory for oh-my-zsh plugins loaded via antidote
+export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+mkdir -p "$ZSH_CACHE_DIR/completions"
+
 # Initialize antidote
 if command -v brew &>/dev/null; then
   source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
