@@ -53,4 +53,8 @@ ifeq ($(shell uname),Darwin)
 	mkdir -p ~/.ssh
 	ln -fs `pwd`/ssh/config ~/.ssh/config
 	chmod 600 ~/.ssh/config
+else ifeq ($(shell grep -qi microsoft /proc/version 2>/dev/null && echo WSL),WSL)
+	mkdir -p ~/.ssh
+	ln -fs `pwd`/ssh/config ~/.ssh/config
+	chmod 600 ~/.ssh/config
 endif
