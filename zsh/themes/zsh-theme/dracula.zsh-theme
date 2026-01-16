@@ -25,15 +25,15 @@ DRACULA_DISPLAY_TIME=${DRACULA_DISPLAY_TIME:-0}
 # Set to 1 to show the 'context' segment
 DRACULA_DISPLAY_CONTEXT=${DRACULA_DISPLAY_CONTEXT:-0}
 
-# Use ASCII-safe characters on Linux to avoid width calculation issues
-if [[ "$OSTYPE" == "darwin"* ]]; then
+# Use Unicode characters if locale supports UTF-8, otherwise no icons
+if [[ "${LANG:-}" == *UTF-8* ]] || [[ "${LC_ALL:-}" == *UTF-8* ]]; then
   DRACULA_ARROW_ICON=${DRACULA_ARROW_ICON:-➜ }
   DRACULA_GIT_CLEAN_ICON=${DRACULA_GIT_CLEAN_ICON:-✔}
   DRACULA_GIT_DIRTY_ICON=${DRACULA_GIT_DIRTY_ICON:-✗}
 else
   DRACULA_ARROW_ICON=${DRACULA_ARROW_ICON:-> }
-  DRACULA_GIT_CLEAN_ICON=${DRACULA_GIT_CLEAN_ICON:-ok}
-  DRACULA_GIT_DIRTY_ICON=${DRACULA_GIT_DIRTY_ICON:-*}
+  DRACULA_GIT_CLEAN_ICON=${DRACULA_GIT_CLEAN_ICON:-}
+  DRACULA_GIT_DIRTY_ICON=${DRACULA_GIT_DIRTY_ICON:-}
 fi
 
 # function to detect if git has support for --no-optional-locks
