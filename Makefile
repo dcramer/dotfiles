@@ -1,8 +1,8 @@
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
-		 install-nuget install-ssh install-zsh
+		 install-nuget install-zsh
 
-install-global: install-user install-ssh
+install-global: install-user
 
 install-git:
 	ln -fs `pwd`/git/gitconfig ~/.gitconfig
