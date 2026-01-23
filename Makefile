@@ -3,7 +3,7 @@ IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
-		 install-nuget install-zsh
+		 install-nuget install-zsh install-claude
 
 install-global: install-user
 
@@ -57,3 +57,9 @@ ifneq ($(or $(IS_DARWIN),$(IS_WSL)),)
 	ln -fs `pwd`/ssh/config ~/.ssh/config
 	chmod 600 ~/.ssh/config
 endif
+
+install-claude:
+	mkdir -p ~/.claude
+	ln -fs `pwd`/claude/settings.json ~/.claude/settings.json
+	ln -fs `pwd`/claude/statusline.sh ~/.claude/statusline.sh
+	chmod +x ~/.claude/statusline.sh
