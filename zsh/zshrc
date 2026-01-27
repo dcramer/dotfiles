@@ -1,15 +1,29 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# ═══════════════════════════════════════════════════════════════
+# 1. EARLY SETUP
+# ═══════════════════════════════════════════════════════════════
 
 # Fallback for terminals without terminfo on remote systems (e.g., Ghostty)
 if [[ -n "$TERM" ]] && ! infocmp "$TERM" &>/dev/null; then
   export TERM=xterm-256color
 fi
 
+# OS detection
+IS_MACOS=false
+IS_WSL=false
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  IS_MACOS=true
+elif [[ -e /proc/version ]] && grep -q microsoft /proc/version; then
+  IS_WSL=true
+fi
+
 # Start ssh-agent on Linux (macOS uses launchd to manage it)
-if [[ "$OSTYPE" != "darwin"* ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
+if [[ "$IS_MACOS" == false ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
   eval "$(ssh-agent -s)" > /dev/null
 fi
+
+# ═══════════════════════════════════════════════════════════════
+# 2. ZSH CONFIGURATION
+# ═══════════════════════════════════════════════════════════════
 
 # Initialize zsh completion system
 autoload -Uz compinit && compinit
@@ -26,76 +40,123 @@ elif [[ -f ~/.antidote/antidote.zsh ]]; then
 fi
 command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 
-# ZSH_THEME="dcramer"
-
 ZSH_CUSTOM=~/.config/zsh_custom
+
+# Keybindings - map ctrl+left and ctrl+right to universal behaviors
+bindkey -e
+bindkey '^[[1;9C' forward-word
+bindkey '^[[1;9D' backward-word
+
+# ═══════════════════════════════════════════════════════════════
+# 3. ENVIRONMENT VARIABLES
+# ═══════════════════════════════════════════════════════════════
+
+export LANG=en_US.UTF-8
+
+# Editor
+export EDITOR='nano'
+export SVN_EDITOR="$EDITOR"
+export GIT_EDITOR="$EDITOR"
+export PYOPEN_CMD='code'
 
 # Show user@hostname in prompt when connected via SSH
 export DRACULA_DISPLAY_CONTEXT=1
 
-export LANG=en_US.UTF-8
-
+# Screenshots (macOS)
 export SCREENSHOTS_PATH=~/Documents/Screenshots
 
-# detect os/terminal
-IS_MACOS=false
-IS_WSL=false
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    IS_MACOS=true
-fi
-if [[ -e /proc/version ]] && [[ $(cat /proc/version | grep microsoft) ]]; then
-    IS_WSL=true
-fi
-
-# macos system overrides
-if [[ $IS_MACOS = true ]]; then
-  mkdir -p $SCREENSHOTS_PATH
-  defaults write com.apple.screencapture location $SCREENSHOTS_PATH
-fi
-
-
-# Preferred editor for local and remote sessions
-export EDITOR='nano'
-export SVN_EDITOR=$EDITOR
-export GIT_EDITOR=$SVN_EDITOR
-export PYOPEN_CMD='code'
-
-# golang
+# Go
 export GOPATH=~/src/go
 
-# docker
-export DOCKER_USER=zeeg99
-export DOCKER_PASS=
-
-# python
+# Python
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
+# Poetry
+export POETRY_HOME=~/.poetry
+export POETRY_VIRTUALENVS_IN_PROJECT=1
+
+# Volta (Node.js version manager)
+export VOLTA_HOME=~/.volta
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+
+# Fly.io
+export FLYCTL_INSTALL="$HOME/.fly"
+
+# ═══════════════════════════════════════════════════════════════
+# 4. PATH CONFIGURATION
+# ═══════════════════════════════════════════════════════════════
+
+# Local binaries
+export PATH="$HOME/.bin:$HOME/.local/bin:$PATH"
+
+# Go
+export PATH="$GOPATH/bin:$PATH"
+
+# Rust/Cargo
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Poetry
+export PATH="$POETRY_HOME/bin:$PATH"
+
+# Volta
+[[ ":$PATH:" != *":$VOLTA_HOME/bin:"* ]] && export PATH="$VOLTA_HOME/bin:$PATH"
+
+# pnpm
+[[ ":$PATH:" != *":$PNPM_HOME:"* ]] && export PATH="$PNPM_HOME:$PATH"
+
+# bun
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Fly.io
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+
+# Sentry devenv
+[[ -d "$HOME/.local/share/sentry-devenv/bin" ]] && export PATH="$HOME/.local/share/sentry-devenv/bin:$PATH"
+
+# Homebrew packages (macOS)
+if [[ "$IS_MACOS" == true ]]; then
+  export PATH="/usr/local/opt/gettext/bin:$PATH"
+  export PATH="/usr/local/opt/ruby/bin:$PATH"
+  export PATH="/usr/local/opt/llvm/bin:$PATH"
+fi
+
+# ═══════════════════════════════════════════════════════════════
+# 5. TOOL INITIALIZATIONS
+# ═══════════════════════════════════════════════════════════════
+
 # fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
 # direnv
 command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
-# poetry
-export POETRY_HOME=~/.poetry
-export POETRY_VIRTUALENVS_IN_PROJECT=1
-# poetry completions zsh > ~/.zfunc/_poetry
-export PATH="$POETRY_HOME/bin:$PATH"
+# NVM (lazy load - only if installed)
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 
-# fpath+=~/.zfunc
+# bun completions
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
-# volta
-export VOLTA_HOME=~/.volta
-grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
+# Google Cloud SDK
+if [[ -d "$HOME/Downloads/google-cloud-sdk" ]]; then
+  [[ -f "$HOME/Downloads/google-cloud-sdk/path.zsh.inc" ]] && source "$HOME/Downloads/google-cloud-sdk/path.zsh.inc"
+  [[ -f "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc" ]] && source "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc"
+fi
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/dcramer/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/dcramer/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+# ═══════════════════════════════════════════════════════════════
+# 6. CUSTOM FUNCTIONS
+# ═══════════════════════════════════════════════════════════════
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/dcramer/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/dcramer/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
-
-# helper for finding branches
+# Interactive git branch selector using fzf
 fbr() {
   local branches branch
   branches=$(git branch --all | grep -v HEAD) &&
@@ -104,59 +165,23 @@ fbr() {
   git checkout $(echo "$branch" | sed "s/.* //")
 }
 
+# List processes listening on TCP ports
 listening() {
-    if [ $# -eq 0 ]; then
-        lsof -iTCP -sTCP:LISTEN -n -P
-    elif [ $# -eq 1 ]; then
-        lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color $1
-    else
-        echo "Usage: listening [pattern]"
-        echo "(you may want to use to sudo here!)"
-    fi
+  if [ $# -eq 0 ]; then
+    lsof -iTCP -sTCP:LISTEN -n -P
+  elif [ $# -eq 1 ]; then
+    lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color $1
+  else
+    echo "Usage: listening [pattern]"
+    echo "(you may want to use to sudo here!)"
+  fi
 }
 
-# local commands
-export PATH="$HOME/.bin:$HOME/.local/bin:$GOPATH/bin:$PATH"
+# ═══════════════════════════════════════════════════════════════
+# 7. OS-SPECIFIC SETTINGS
+# ═══════════════════════════════════════════════════════════════
 
-# various brew support
-export PATH="/usr/local/opt/gettext/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
-
-# cargo
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="/usr/local/opt/llvm/bin:$PATH"
-
-# map ctrl+left and ctrl+right to universal behaviors
-bindkey -e
-bindkey '^[[1;9C' forward-word
-bindkey '^[[1;9D' backward-word
-
-# pdm support
-if [ -n "$PYTHONPATH" ]; then
-    export PYTHONPATH='$HOME/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582':$PYTHONPATH
-else
-    export PYTHONPATH='$HOME/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
+if [[ "$IS_MACOS" == true ]]; then
+  mkdir -p "$SCREENSHOTS_PATH"
+  defaults write com.apple.screencapture location "$SCREENSHOTS_PATH"
 fi
-
-export FLYCTL_INSTALL="$HOME/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
-
-# pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export PATH="/Users/dcramer/.local/share/sentry-devenv/bin:$PATH"
