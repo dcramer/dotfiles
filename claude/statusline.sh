@@ -26,5 +26,8 @@ fi
 ctx_fmt=$(printf "%.0f%%" "$ctx_pct")
 
 # Build status line with dim separators
-sep=$'\e[90m │ \e[0m'
-echo -e "\e[90m◈\e[0m ${model}${sep}${repo}${sep}${cost_fmt}${sep}${ctx_fmt}"
+# Use $'...' quoting for escape sequences (portable in bash, interpreted at parse time)
+dim=$'\e[90m'
+reset=$'\e[0m'
+sep="${dim} │ ${reset}"
+printf '%s\n' "${dim}◈${reset} ${model}${sep}${repo}${sep}${cost_fmt}${sep}${ctx_fmt}"
