@@ -185,3 +185,6 @@ if [[ "$IS_MACOS" == true ]]; then
   mkdir -p "$SCREENSHOTS_PATH"
   defaults write com.apple.screencapture location "$SCREENSHOTS_PATH"
 fi
+
+# dex completions
+command -v dex &>/dev/null && eval "$(dex completion zsh)"
