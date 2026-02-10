@@ -14,5 +14,6 @@
     "ralph-loop@claude-plugins-official": true,
     "dex@dex": true,
     "agent-browser@agent-browser": true
+    "superpowers@superpowers-marketplace": true
   }
 }
