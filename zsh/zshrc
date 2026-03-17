@@ -27,6 +27,7 @@ fi
 
 # Initialize zsh completion system
 autoload -Uz compinit && compinit
+autoload -Uz add-zsh-hook
 
 # Set up cache directory for oh-my-zsh plugins loaded via antidote
 export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
@@ -176,6 +177,89 @@ listening() {
     echo "(you may want to use to sudo here!)"
   fi
 }
+
+# Update terminal tab/window titles with the current directory and running command.
+terminal_title_sanitize() {
+  emulate -L zsh
+  setopt extended_glob
+
+  local text="${1-}"
+  text=${text//$'\e'/}
+  text=${text//$'\a'/}
+  text=${text//[[:cntrl:]]/ }
+  text=${text//[[:space:]]##/ }
+  text=${text# }
+  text=${text% }
+
+  print -r -- "$text"
+}
+
+terminal_title_pwd() {
+  emulate -L zsh
+
+  local cwd
+  if (( $+functions[_fishy_collapsed_wd] )); then
+    cwd=$(_fishy_collapsed_wd)
+  else
+    cwd=$(print -P -- '%~')
+  fi
+
+  terminal_title_sanitize "$cwd"
+}
+
+terminal_title_set() {
+  emulate -L zsh
+
+  [[ -o interactive && -t 1 && "$TERM" != "dumb" ]] || return
+
+  local title
+  title=$(terminal_title_sanitize "$1")
+  [[ -n "$title" ]] || return
+
+  printf '\e]0;%s\a\e]2;%s\a' "$title" "$title"
+}
+
+terminal_title_precmd() {
+  emulate -L zsh
+  terminal_title_set "$(terminal_title_pwd)"
+}
+
+terminal_title_preexec() {
+  emulate -L zsh
+
+  local cwd command title
+  local separator=' | '
+  local max_title_length=100
+  local max_command_length
+
+  cwd=$(terminal_title_pwd)
+  command=$(terminal_title_sanitize "${2-}")
+
+  if [[ -z "$cwd" || -z "$command" ]]; then
+    terminal_title_set "$cwd"
+    return
+  fi
+
+  max_command_length=$(( max_title_length - ${#cwd} - ${#separator} ))
+  if (( max_command_length <= 0 )); then
+    terminal_title_set "$cwd"
+    return
+  fi
+
+  if (( ${#command} > max_command_length )); then
+    if (( max_command_length > 3 )); then
+      command="${command[1,$(( max_command_length - 3 ))]}..."
+    else
+      command="${command[1,$max_command_length]}"
+    fi
+  fi
+
+  title="${cwd}${separator}${command}"
+  terminal_title_set "$title"
+}
+
+add-zsh-hook precmd terminal_title_precmd
+add-zsh-hook preexec terminal_title_preexec
 
 # ═══════════════════════════════════════════════════════════════
 # 7. OS-SPECIFIC SETTINGS
