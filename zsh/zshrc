@@ -33,13 +33,24 @@ autoload -Uz add-zsh-hook
 export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
 mkdir -p "$ZSH_CACHE_DIR/completions"
 
+# Keep the prompt working even when the plugin manager is unavailable.
+load_local_dracula_theme() {
+  local theme_path="$HOME/.config/zsh_custom/themes/zsh-theme/dracula.zsh-theme"
+
+  (( $+functions[dracula_git_async] )) && return
+  [[ -f "$theme_path" ]] && source "$theme_path"
+}
+
 # Initialize antidote
 if command -v brew &>/dev/null; then
-  source $(brew --prefix)/opt/antidote/share/antidote/antidote.zsh
+  ANTIDOTE_PATH="$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
+  [[ -f "$ANTIDOTE_PATH" ]] && source "$ANTIDOTE_PATH"
 elif [[ -f ~/.antidote/antidote.zsh ]]; then
   source ~/.antidote/antidote.zsh
 fi
 command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
+load_local_dracula_theme
+unset ANTIDOTE_PATH
 
 # Initialize zinit
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then

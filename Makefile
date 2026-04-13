@@ -38,6 +38,7 @@ endif
 
 install-zsh:
 	mkdir -p `pwd`/.oh-my-zsh/
+	ln -fs `pwd`/zsh/zprofile ~/.zprofile
 	ln -fs `pwd`/zsh/zshrc ~/.zshrc
 	# TODO(dcramer): there must be a better way to do specify my own theme?
 	# [ -e ~/.oh-my-zsh ] && ln -fs `pwd`/zsh/themes/* ~/.oh-my-zsh/themes/
