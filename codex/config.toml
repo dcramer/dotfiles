@@ -1,0 +1,33 @@
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+
+[projects."/home/dcramer/src/junior"]
+trust_level = "trusted"
+
+[projects."/home/dcramer/src/junior-prod"]
+trust_level = "trusted"
+
+[projects."/home/dcramer/src/sentry-mcp"]
+trust_level = "trusted"
+
+[projects."/home/dcramer/src/peated"]
+trust_level = "trusted"
+
+[projects."/home/dcramer/src/dotfiles"]
+trust_level = "trusted"
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[apps.connector_76869538009648d5b282a4bb21c3d157.tools.github_create_pull_request]
+approval_mode = "approve"
+
+[features]
+apps = false
+
+[mcp_servers.uidotsh]
+url = "https://ui.sh/mcp?agent=codex"
+bearer_token_env_var = "UIDOTSH_TOKEN"
+
+[mcp_servers.uidotsh.tools.uidotsh_fetch]
+approval_mode = "approve"

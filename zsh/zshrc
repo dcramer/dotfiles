@@ -41,6 +41,19 @@ elif [[ -f ~/.antidote/antidote.zsh ]]; then
 fi
 command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 
+# Initialize zinit
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+  print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+  command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+    print -P "%F{33} %F{34}Installation successful.%f%b" || \
+    print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
 ZSH_CUSTOM=~/.config/zsh_custom
 
 # Keybindings - map ctrl+left and ctrl+right to universal behaviors
@@ -73,6 +86,13 @@ export GOPATH=~/src/go
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONSTARTUP="$HOME/.pythonrc.py"
 
+# PDM (PEP 582)
+if [[ -n "$PYTHONPATH" ]]; then
+  export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582':$PYTHONPATH
+else
+  export PYTHONPATH='/home/dcramer/.local/share/pdm/venv/lib/python3.8/site-packages/pdm/pep582'
+fi
+
 # Poetry
 export POETRY_HOME=~/.poetry
 export POETRY_VIRTUALENVS_IN_PROJECT=1
@@ -101,6 +121,7 @@ export PATH="$HOME/.bin:$HOME/.local/bin:$PATH"
 
 # Go
 export PATH="$GOPATH/bin:$PATH"
+[[ -d /usr/local/go/bin ]] && export PATH="$PATH:/usr/local/go/bin"
 
 # Rust/Cargo
 export PATH="$HOME/.cargo/bin:$PATH"
@@ -272,3 +293,17 @@ fi
 
 # dex completions
 command -v dex &>/dev/null && eval "$(dex completion zsh)"
+
+# Terraform completions
+if command -v terraform &>/dev/null; then
+  autoload -U +X bashcompinit && bashcompinit
+  complete -o nospace -C "$(command -v terraform)" terraform
+fi
+
+if [[ "$IS_WSL" == true ]]; then
+  export ANDROID_HOME=/mnt/c/Users/dcram/AppData/Local/Android/Sdk
+  export WSLENV=ANDROID_HOME/p
+fi
+
+alias claude="/home/dcramer/.claude/local/claude"
+export CLAUDE_CODE_NO_FLICKER=1

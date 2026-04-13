@@ -3,7 +3,7 @@ IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
-		 install-nuget install-zsh install-claude
+		 install-nuget install-zsh install-claude install-codex install-dotagents
 
 install-global: install-user
 
@@ -63,3 +63,10 @@ install-claude:
 	ln -fs `pwd`/claude/settings.json ~/.claude/settings.json
 	ln -fs `pwd`/claude/statusline.sh ~/.claude/statusline.sh
 	chmod +x ~/.claude/statusline.sh
+
+install-codex:
+	mkdir -p ~/.codex
+	ln -fs `pwd`/codex/config.toml ~/.codex/config.toml
+
+install-dotagents:
+	pnpm dlx @sentry/dotagents --user install
