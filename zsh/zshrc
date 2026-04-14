@@ -25,13 +25,17 @@ fi
 # 2. ZSH CONFIGURATION
 # ═══════════════════════════════════════════════════════════════
 
-# Initialize zsh completion system
-autoload -Uz compinit && compinit
-autoload -Uz add-zsh-hook
+# Initialize zsh completion hooks and helpers.
+autoload -Uz add-zsh-hook bashcompinit compinit
 
 # Set up cache directory for oh-my-zsh plugins loaded via antidote
 export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
 mkdir -p "$ZSH_CACHE_DIR/completions"
+
+enable_bash_completion() {
+  (( ${+functions[complete]} )) && return
+  bashcompinit
+}
 
 # Keep the prompt working even when the plugin manager is unavailable.
 load_local_dracula_theme() {
@@ -52,18 +56,14 @@ command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 load_local_dracula_theme
 unset ANTIDOTE_PATH
 
-# Initialize zinit
-if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
-  print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-  command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-    print -P "%F{33} %F{34}Installation successful.%f%b" || \
-    print -P "%F{160} The clone has failed.%f%b"
+# Initialize zinit when it is already installed locally.
+if [[ -f "$HOME/.local/share/zinit/zinit.git/zinit.zsh" ]]; then
+  source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 fi
 
-source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
+# Initialize zsh completion system after all completion paths are available.
+compinit -d "$ZSH_CACHE_DIR/.zcompdump"
+(( ${+functions[_zinit]} )) && _comps[zinit]=_zinit
 
 ZSH_CUSTOM=~/.config/zsh_custom
 
@@ -174,7 +174,10 @@ command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
 
 # NVM (lazy load - only if installed)
 [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
-[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+if [[ -s "$NVM_DIR/bash_completion" ]]; then
+  enable_bash_completion
+  source "$NVM_DIR/bash_completion"
+fi
 
 # bun completions
 [[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
@@ -307,7 +310,7 @@ command -v dex &>/dev/null && eval "$(dex completion zsh)"
 
 # Terraform completions
 if command -v terraform &>/dev/null; then
-  autoload -U +X bashcompinit && bashcompinit
+  enable_bash_completion
   complete -o nospace -C "$(command -v terraform)" terraform
 fi
 
