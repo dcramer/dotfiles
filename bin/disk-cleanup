@@ -1,0 +1,609 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+IS_WSL=false
+IS_MACOS=false
+
+if [[ "${OSTYPE:-}" == darwin* ]]; then
+  IS_MACOS=true
+elif [[ -r /proc/version ]] && grep -qi microsoft /proc/version; then
+  IS_WSL=true
+fi
+
+WINDOWS_HOME="${DISK_CLEANUP_WINDOWS_HOME:-}"
+REPORT_DEEP=false
+DOCKER_PRUNE_UNTIL="${DISK_CLEANUP_DOCKER_UNTIL:-240h}"
+
+section() {
+  printf '\n== %s ==\n' "$1"
+}
+
+usage() {
+  cat <<'EOF'
+Usage:
+  disk-cleanup [--deep] [--run]
+  disk-cleanup --help
+
+Examples:
+  disk-cleanup
+  disk-cleanup --run
+  disk-cleanup --deep
+  DISK_CLEANUP_DOCKER_UNTIL=168h disk-cleanup --run
+
+Notes:
+  - With no flags, disk-cleanup prints a report and a dry-run cleanup plan.
+  - `--run` executes the default cleanup plan.
+  - `--deep` includes slower directory breakdowns.
+  - Docker cleanup uses `docker system prune -a --filter "until=..."`
+    and does not prune volumes by default.
+EOF
+}
+
+resolve_windows_home() {
+  local users_root="/mnt/c/Users"
+  local candidate=""
+  local candidate_name=""
+
+  if [[ -n "$WINDOWS_HOME" ]]; then
+    return
+  fi
+
+  if [[ "$IS_WSL" != true ]]; then
+    return
+  fi
+
+  if command -v cmd.exe >/dev/null 2>&1 && command -v wslpath >/dev/null 2>&1; then
+    local raw_path
+    raw_path="$(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r' || true)"
+    if [[ -n "$raw_path" ]]; then
+      WINDOWS_HOME="$(wslpath -u "$raw_path" 2>/dev/null || true)"
+    fi
+  fi
+
+  if [[ -n "$WINDOWS_HOME" && -d "$WINDOWS_HOME" ]]; then
+    return
+  fi
+
+  if [[ -d "$users_root/$USER" ]]; then
+    WINDOWS_HOME="$users_root/$USER"
+    return
+  fi
+
+  if [[ ! -d "$users_root" ]]; then
+    return
+  fi
+
+  for candidate in "$users_root"/*; do
+    [[ -d "$candidate" ]] || continue
+
+    candidate_name="$(basename "$candidate")"
+    case "$candidate_name" in
+      "All Users"|"Default"|"Default User"|"Public")
+        continue
+        ;;
+    esac
+
+    if [[ "${USER,,}" == "${candidate_name,,}"* ]] || [[ "${candidate_name,,}" == "${USER,,}"* ]]; then
+      WINDOWS_HOME="$candidate"
+      return
+    fi
+  done
+}
+
+print_sizes() {
+  local -a lines=()
+  local path
+  local line
+
+  for path in "$@"; do
+    while IFS= read -r line; do
+      [[ -n "$line" ]] && lines+=("$line")
+    done < <(du -sh "$path" 2>/dev/null || true)
+  done
+
+  if [[ ${#lines[@]} -eq 0 ]]; then
+    echo "none found"
+    return
+  fi
+
+  printf '%s\n' "${lines[@]}" | sort -h
+}
+
+report_existing_paths() {
+  local -a existing=()
+  local path
+
+  for path in "$@"; do
+    [[ -e "$path" ]] && existing+=("$path")
+  done
+
+  if [[ ${#existing[@]} -eq 0 ]]; then
+    echo "none found"
+    return
+  fi
+
+  print_sizes "${existing[@]}"
+}
+
+report_top_children() {
+  local dir="$1"
+  local limit="$2"
+  local -a children=()
+  local path
+
+  if [[ ! -d "$dir" ]]; then
+    echo "missing: $dir"
+    return
+  fi
+
+  shopt -s nullglob dotglob
+  for path in "$dir"/*; do
+    [[ -e "$path" ]] && children+=("$path")
+  done
+  shopt -u nullglob dotglob
+
+  if [[ ${#children[@]} -eq 0 ]]; then
+    echo "none found"
+    return
+  fi
+
+  print_sizes "${children[@]}" | tail -n "$limit"
+}
+
+remove_paths() {
+  local label="$1"
+  local apply="$2"
+  shift 2
+
+  local -a existing=()
+  local path
+
+  for path in "$@"; do
+    [[ -e "$path" ]] && existing+=("$path")
+  done
+
+  section "$label"
+  if [[ ${#existing[@]} -eq 0 ]]; then
+    echo "nothing to remove"
+    return
+  fi
+
+  print_sizes "${existing[@]}"
+
+  if [[ "$apply" != true ]]; then
+    echo "dry run only; re-run with disk-cleanup --run to remove these paths"
+    return
+  fi
+
+  for path in "${existing[@]}"; do
+    rm -rf "$path"
+  done
+
+  echo "removed ${#existing[@]} path(s)"
+}
+
+remove_directory_contents() {
+  local label="$1"
+  local dir="$2"
+  local apply="$3"
+  local -a entries=()
+  local path
+
+  section "$label"
+  if [[ ! -d "$dir" ]]; then
+    echo "missing: $dir"
+    return
+  fi
+
+  while IFS= read -r -d '' path; do
+    entries+=("$path")
+  done < <(find "$dir" -mindepth 1 -maxdepth 1 -print0 2>/dev/null)
+
+  if [[ ${#entries[@]} -eq 0 ]]; then
+    echo "nothing to remove"
+    return
+  fi
+
+  print_sizes "${entries[@]}" | tail -n 20
+
+  if [[ "$apply" != true ]]; then
+    echo "dry run only; re-run with disk-cleanup --run to remove these entries"
+    return
+  fi
+
+  for path in "${entries[@]}"; do
+    rm -rf "$path" 2>/dev/null || true
+  done
+
+  echo "attempted to remove ${#entries[@]} entries from $dir"
+}
+
+preview_windows_temp_cleanup() {
+  local dir="$1"
+
+  section "Windows Temp"
+  if [[ ! -d "$dir" ]]; then
+    echo "missing: $dir"
+    return
+  fi
+
+  echo "will remove all entries under:"
+  echo "  $dir"
+  echo "largest known entries:"
+  report_existing_paths \
+    "$dir/wsl-crashes" \
+    "$dir/docker-scout" \
+    "$dir/DiagOutputDir"
+  echo "dry run only; re-run with disk-cleanup --run to remove these entries"
+}
+
+print_command() {
+  printf '  $'
+  printf ' %q' "$@"
+  printf '\n'
+}
+
+begin_action() {
+  local label="$1"
+  local apply="$2"
+
+  section "$label"
+  if [[ "$apply" != true ]]; then
+    echo "dry run only; re-run with disk-cleanup --run to execute these commands"
+  fi
+}
+
+run_or_echo() {
+  local apply="$1"
+  shift
+
+  print_command "$@"
+  if [[ "$apply" == true ]]; then
+    "$@"
+  fi
+}
+
+report_filesystems() {
+  section "Filesystems"
+  df -h /
+
+  if [[ "$IS_WSL" == true && -d /mnt/c ]]; then
+    df -h /mnt/c
+  fi
+}
+
+report_home_hotspots() {
+  section "Home Hotspots"
+  report_existing_paths \
+    "$HOME/.local/share/pnpm" \
+    "$HOME/.cache" \
+    "$HOME/.npm" \
+    "$HOME/src" \
+    "$HOME/.local/share" \
+    "$HOME/.local"
+
+  section "Cache Hotspots"
+  report_existing_paths \
+    "$HOME/.cache/yarn" \
+    "$HOME/.cache/pnpm" \
+    "$HOME/.cache/pre-commit" \
+    "$HOME/.cache/ms-playwright" \
+    "$HOME/.cache/Cypress" \
+    "$HOME/.cache/pdm" \
+    "$HOME/.cache/uv" \
+    "$HOME/.cache/pip" \
+    "$HOME/.cache/typescript" \
+    "$HOME/.cache/prisma" \
+    "$HOME/.cache/electron" \
+    "$HOME/.cache/go-build" \
+    "$HOME/.cache/mongodb-binaries" \
+    "$HOME/.cache/node-gyp" \
+    "$HOME/.npm/_cacache" \
+    "$HOME/.npm/_npx"
+
+  if [[ "$REPORT_DEEP" == true && -d "$HOME/src" ]]; then
+    section "Largest Repos In ~/src"
+    report_top_children "$HOME/src" 12
+  fi
+}
+
+report_windows_hotspots() {
+  local temp_dir=""
+
+  resolve_windows_home
+
+  if [[ "$IS_WSL" != true ]]; then
+    return
+  fi
+
+  section "Windows Hotspots"
+  if [[ -z "$WINDOWS_HOME" || ! -d "$WINDOWS_HOME" ]]; then
+    echo "could not resolve Windows profile path"
+    return
+  fi
+
+  temp_dir="$WINDOWS_HOME/AppData/Local/Temp"
+
+  report_existing_paths \
+    "$WINDOWS_HOME/AppData/Local/Docker/wsl/data/ext4.vhdx" \
+    "$temp_dir/wsl-crashes" \
+    "$temp_dir/docker-scout" \
+    "$temp_dir/DiagOutputDir" \
+    "$WINDOWS_HOME/AppData/Roaming/Code" \
+    "$WINDOWS_HOME/AppData/Roaming/Cursor" \
+    "$WINDOWS_HOME/AppData/Roaming/discord"
+
+  if [[ "$REPORT_DEEP" == true ]]; then
+    section "Windows Hotspots (Deep)"
+    report_existing_paths \
+      "$WINDOWS_HOME/AppData/Local/Docker" \
+      "$temp_dir" \
+      "$WINDOWS_HOME/AppData/Local/Packages" \
+      "$WINDOWS_HOME/AppData/Local/Package Cache"
+  fi
+
+  if [[ "$REPORT_DEEP" == true && -d "$temp_dir" ]]; then
+    section "Largest Windows Temp Entries"
+    report_top_children "$temp_dir" 12
+  fi
+}
+
+report_cleanup_hints() {
+  section "Run Mode"
+  echo "Run disk-cleanup with no flags to preview the default cleanup plan."
+  echo "Run disk-cleanup --run to execute that plan."
+  echo "Use --deep when you want a slower, more detailed report first."
+  echo "Override Docker age filter with DISK_CLEANUP_DOCKER_UNTIL=168h"
+}
+
+clean_home_caches() {
+  local apply="$1"
+
+  remove_paths "Home Caches" "$apply" \
+    "$HOME/.cache/pre-commit" \
+    "$HOME/.cache/ms-playwright" \
+    "$HOME/.cache/Cypress" \
+    "$HOME/.cache/pdm" \
+    "$HOME/.cache/uv" \
+    "$HOME/.cache/pip" \
+    "$HOME/.cache/typescript" \
+    "$HOME/.cache/prisma" \
+    "$HOME/.cache/electron" \
+    "$HOME/.cache/go-build" \
+    "$HOME/.cache/mongodb-binaries" \
+    "$HOME/.cache/node-gyp"
+}
+
+clean_package_managers() {
+  local apply="$1"
+  local yarn_version=""
+  local yarn_major=""
+  local npm_version=""
+  local npm_major=""
+
+  begin_action "Package Managers" "$apply"
+
+  if command -v pnpm >/dev/null 2>&1; then
+    run_or_echo "$apply" pnpm store prune
+  else
+    echo "  pnpm not installed; skipping"
+  fi
+
+  if command -v npm >/dev/null 2>&1; then
+    npm_version="$(npm --version 2>/dev/null || true)"
+    npm_major="${npm_version%%.*}"
+    run_or_echo "$apply" npm cache clean --force
+
+    if [[ "$npm_major" =~ ^[0-9]+$ ]] && (( npm_major >= 11 )); then
+      run_or_echo "$apply" npm cache npx rm
+    else
+      echo "  npm cache npx rm is only available on newer npm releases; skipping"
+    fi
+  else
+    echo "  npm not installed; skipping"
+  fi
+
+  if command -v yarn >/dev/null 2>&1; then
+    yarn_version="$(yarn --version 2>/dev/null || true)"
+    yarn_major="${yarn_version%%.*}"
+
+    if [[ "$yarn_major" =~ ^[0-9]+$ ]] && (( yarn_major >= 2 )); then
+      run_or_echo "$apply" yarn cache clean --mirror
+    else
+      run_or_echo "$apply" yarn cache clean
+    fi
+  else
+    echo "  yarn not installed; skipping"
+  fi
+}
+
+clean_docker() {
+  local apply="$1"
+
+  begin_action "Docker" "$apply"
+
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "  docker not installed; skipping"
+    return
+  fi
+
+  echo "  pruning unused Docker objects older than $DOCKER_PRUNE_UNTIL"
+  echo "  volumes are intentionally left alone"
+
+  run_or_echo "$apply" docker system df
+  run_or_echo "$apply" docker system prune -a --force --filter "until=$DOCKER_PRUNE_UNTIL"
+  if [[ "$apply" == true ]]; then
+    run_or_echo "$apply" docker system df
+  fi
+}
+
+clean_windows_temp() {
+  local apply="$1"
+  local temp_dir=""
+
+  resolve_windows_home
+
+  if [[ "$IS_WSL" != true ]]; then
+    echo "windows-temp cleanup is only supported from WSL"
+    return
+  fi
+
+  if [[ -z "$WINDOWS_HOME" ]]; then
+    echo "could not resolve Windows profile path"
+    return
+  fi
+
+  temp_dir="$WINDOWS_HOME/AppData/Local/Temp"
+
+  if [[ "$apply" == true ]]; then
+    remove_directory_contents "Windows Temp" "$temp_dir" "$apply"
+  else
+    preview_windows_temp_cleanup "$temp_dir"
+  fi
+}
+
+run_report() {
+  report_filesystems
+  report_home_hotspots
+  report_windows_hotspots
+  report_cleanup_hints
+}
+
+run_cleanup_plan() {
+  local apply="$1"
+
+  section "Cleanup Plan"
+  if [[ "$apply" == true ]]; then
+    echo "running default cleanup plan"
+  else
+    echo "previewing default cleanup plan"
+  fi
+
+  clean_package_managers "$apply"
+  clean_docker "$apply"
+  clean_home_caches "$apply"
+  clean_windows_temp "$apply"
+}
+
+run_legacy_clean() {
+  local apply=false
+  local -a targets=()
+  local target
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --yes)
+        apply=true
+        ;;
+      -h|--help|help)
+        usage
+        return
+        ;;
+      *)
+        targets+=("$1")
+        ;;
+    esac
+    shift
+  done
+
+  if [[ ${#targets[@]} -eq 0 ]]; then
+    echo "missing cleanup target"
+    echo
+    usage
+    exit 1
+  fi
+
+  for target in "${targets[@]}"; do
+    case "$target" in
+      package-managers)
+        clean_package_managers "$apply"
+        ;;
+      docker)
+        clean_docker "$apply"
+        ;;
+      home-caches)
+        clean_home_caches "$apply"
+        ;;
+      windows-temp)
+        clean_windows_temp "$apply"
+        ;;
+      all)
+        clean_package_managers "$apply"
+        clean_docker "$apply"
+        clean_home_caches "$apply"
+        clean_windows_temp "$apply"
+        ;;
+      *)
+        echo "unknown cleanup target: $target"
+        echo
+        usage
+        exit 1
+        ;;
+    esac
+  done
+}
+
+main() {
+  local apply=false
+
+  if [[ $# -gt 0 ]]; then
+    case "$1" in
+      report)
+        shift || true
+        while [[ $# -gt 0 ]]; do
+          case "$1" in
+            --deep)
+              REPORT_DEEP=true
+              ;;
+            -h|--help|help)
+              usage
+              exit 0
+              ;;
+            *)
+              echo "unknown report option: $1"
+              echo
+              usage
+              exit 1
+              ;;
+          esac
+          shift
+        done
+        run_report
+        exit 0
+        ;;
+      clean)
+        shift || true
+        run_legacy_clean "$@"
+        exit 0
+        ;;
+    esac
+  fi
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --deep)
+        REPORT_DEEP=true
+        ;;
+      --run)
+        apply=true
+        ;;
+      -h|--help|help)
+        usage
+        exit 0
+        ;;
+      *)
+        echo "unknown option: $1"
+        echo
+        usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  run_report
+  run_cleanup_plan "$apply"
+}
+
+main "$@"
