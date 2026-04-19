@@ -63,4 +63,6 @@ install-codex:
 	ln -fs `pwd`/codex/config.toml ~/.codex/config.toml
 
 install-dotagents:
+	mkdir -p ~/.agents
+	ln -fs `pwd`/agents/agents.toml ~/.agents/agents.toml
 	pnpm dlx @sentry/dotagents --user install
