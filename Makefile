@@ -37,6 +37,11 @@ else
 endif
 
 install-zsh:
+ifdef IS_DARWIN
+	if ! brew list antidote >/dev/null 2>&1; then brew install antidote; fi
+else
+	[ -f ~/.antidote/antidote.zsh ] || git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
+endif
 	mkdir -p `pwd`/.oh-my-zsh/
 	ln -fs `pwd`/zsh/zprofile ~/.zprofile
 	ln -fs `pwd`/zsh/zshrc ~/.zshrc
