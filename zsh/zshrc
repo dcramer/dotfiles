@@ -66,6 +66,20 @@ load_local_history_substring_search() {
   [[ -f "$plugin_path" ]] && source "$plugin_path"
 }
 
+load_local_zsh_autosuggestions() {
+  local plugin_path="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+  (( ${+functions[_zsh_autosuggest_start]} )) && return
+  [[ -f "$plugin_path" ]] && source "$plugin_path"
+}
+
+load_local_zsh_syntax_highlighting() {
+  local plugin_path="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+  [[ "$_ZSH_HIGHLIGHT_HIGHLIGHTERS" != "" ]] && return
+  [[ -f "$plugin_path" ]] && source "$plugin_path"
+}
+
 # Initialize antidote
 if command -v brew &>/dev/null; then
   ANTIDOTE_PATH="$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
@@ -76,6 +90,7 @@ fi
 command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 load_local_dracula_theme
 load_local_history_substring_search
+load_local_zsh_autosuggestions
 unset ANTIDOTE_PATH
 
 # Initialize zinit when it is already installed locally.
@@ -344,3 +359,6 @@ fi
 
 alias claude="/home/dcramer/.claude/local/claude"
 export CLAUDE_CODE_NO_FLICKER=1
+
+# zsh-syntax-highlighting must load after other widgets and keybindings.
+load_local_zsh_syntax_highlighting
