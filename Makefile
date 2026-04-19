@@ -28,30 +28,18 @@ install-fish:
 	mkdir -p ~/.config/fish/
 	ln -fs `pwd`/fish/config.fish ~/.config/fish/config.fish
 
-bootstrap-zsh:
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-ifdef IS_DARWIN
-	brew install antidote
-else
-	git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
-endif
+install-zinit:
+	mkdir -p ~/.local/share/zinit
+	[ -d ~/.local/share/zinit/zinit.git/.git ] || git clone --depth=1 https://github.com/zdharma-continuum/zinit.git ~/.local/share/zinit/zinit.git
+	zsh -lc 'source "$(CURDIR)/zsh/zinit_plugins.zsh"; source "$${XDG_DATA_HOME:-$$HOME/.local/share}/zinit/zinit.git/zinit.zsh"; dotfiles_prime_zinit_plugins'
 
-install-zsh:
-ifdef IS_DARWIN
-	if ! brew list antidote >/dev/null 2>&1; then brew install antidote; fi
-else
-	[ -f ~/.antidote/antidote.zsh ] || git clone --depth=1 https://github.com/mattmc3/antidote.git ~/.antidote
-endif
-	mkdir -p `pwd`/.oh-my-zsh/
+bootstrap-zsh: install-zinit
+
+install-zsh: install-zinit
 	ln -fs `pwd`/zsh/zprofile ~/.zprofile
 	ln -fs `pwd`/zsh/zshrc ~/.zshrc
-	# TODO(dcramer): there must be a better way to do specify my own theme?
-	# [ -e ~/.oh-my-zsh ] && ln -fs `pwd`/zsh/themes/* ~/.oh-my-zsh/themes/
 	mkdir -p ~/.config/zsh_custom/themes/
 	ln -fs `pwd`/zsh/themes/* ~/.config/zsh_custom/themes/
-	ln -fs `pwd`/zsh/zsh_plugins ~/.config/zsh_plugins
-	# mkdir -p ~/.zsh-extras/
-	# [ ! -e ~/.zsh-extras/zsh-autosuggestions ] && git clone git://github.com/tarruda/zsh-autosuggestions ~/.zsh-extras/zsh-autosuggestions
 
 install-nuget:
 	mkdir -p ~/.nuget

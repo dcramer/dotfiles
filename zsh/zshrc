@@ -28,9 +28,14 @@ fi
 # Initialize zsh completion hooks and helpers.
 autoload -Uz add-zsh-hook bashcompinit compinit
 
-# Set up cache directory for oh-my-zsh plugins loaded via antidote
+# Resolve the real dotfiles zsh directory even when ~/.zshrc is symlinked here.
+DOTFILES_ZSH_DIR="${${(%):-%N}:A:h}"
+
+# Cache completion metadata for plugin-provided compdefs.
 export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
 mkdir -p "$ZSH_CACHE_DIR/completions"
+export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+[[ -f "$DOTFILES_ZSH_DIR/zinit_plugins.zsh" ]] && source "$DOTFILES_ZSH_DIR/zinit_plugins.zsh"
 
 enable_bash_completion() {
   (( ${+functions[complete]} )) && return
@@ -51,7 +56,7 @@ restore_history_search_bindings() {
   fi
 }
 
-# Keep the prompt working even when the plugin manager is unavailable.
+# Keep the prompt working even when plugin bootstrap is incomplete.
 load_local_dracula_theme() {
   local theme_path="$HOME/.config/zsh_custom/themes/zsh-theme/dracula.zsh-theme"
 
@@ -59,48 +64,16 @@ load_local_dracula_theme() {
   [[ -f "$theme_path" ]] && source "$theme_path"
 }
 
-load_local_history_substring_search() {
-  local plugin_path="$HOME/.oh-my-zsh/plugins/history-substring-search/history-substring-search.plugin.zsh"
-
-  (( ${+functions[history-substring-search-up]} )) && return
-  [[ -f "$plugin_path" ]] && source "$plugin_path"
-}
-
-load_local_zsh_autosuggestions() {
-  local plugin_path="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-autosuggestions/zsh-autosuggestions.zsh"
-
-  (( ${+functions[_zsh_autosuggest_start]} )) && return
-  [[ -f "$plugin_path" ]] && source "$plugin_path"
-}
-
-load_local_zsh_syntax_highlighting() {
-  local plugin_path="$HOME/.cache/antibody/https-COLON--SLASH--SLASH-github.com-SLASH-zsh-users-SLASH-zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-
-  [[ "$_ZSH_HIGHLIGHT_HIGHLIGHTERS" != "" ]] && return
-  [[ -f "$plugin_path" ]] && source "$plugin_path"
-}
-
-# Initialize antidote
-if command -v brew &>/dev/null; then
-  ANTIDOTE_PATH="$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
-  [[ -f "$ANTIDOTE_PATH" ]] && source "$ANTIDOTE_PATH"
-elif [[ -f ~/.antidote/antidote.zsh ]]; then
-  source ~/.antidote/antidote.zsh
+if [[ -f "$ZINIT_HOME/zinit.zsh" ]]; then
+  source "$ZINIT_HOME/zinit.zsh"
+  (( ${+functions[dotfiles_load_zinit_plugins]} )) && dotfiles_load_zinit_plugins
 fi
-command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 load_local_dracula_theme
-load_local_history_substring_search
-load_local_zsh_autosuggestions
-unset ANTIDOTE_PATH
-
-# Initialize zinit when it is already installed locally.
-if [[ -f "$HOME/.local/share/zinit/zinit.git/zinit.zsh" ]]; then
-  source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
-fi
 
 # Initialize zsh completion system after all completion paths are available.
 compinit -d "$ZSH_CACHE_DIR/.zcompdump"
 (( ${+functions[_zinit]} )) && _comps[zinit]=_zinit
+(( ${+functions[zinit]} )) && zinit cdreplay -q
 
 ZSH_CUSTOM=~/.config/zsh_custom
 
@@ -361,4 +334,4 @@ alias claude="/home/dcramer/.claude/local/claude"
 export CLAUDE_CODE_NO_FLICKER=1
 
 # zsh-syntax-highlighting must load after other widgets and keybindings.
-load_local_zsh_syntax_highlighting
+(( ${+functions[dotfiles_load_zinit_syntax_highlighting]} )) && dotfiles_load_zinit_syntax_highlighting
