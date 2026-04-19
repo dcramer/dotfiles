@@ -16,6 +16,9 @@ trust_level = "trusted"
 [projects."/home/dcramer/src/dotfiles"]
 trust_level = "trusted"
 
+[projects."/home/dcramer/src/vitest-evals"]
+trust_level = "trusted"
+
 [plugins."github@openai-curated"]
 enabled = true
 
