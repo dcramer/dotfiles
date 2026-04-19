@@ -37,12 +37,33 @@ enable_bash_completion() {
   bashcompinit
 }
 
+restore_history_search_bindings() {
+  (( ${+functions[history-substring-search-up]} )) || return
+
+  if [[ -n "${terminfo[kcuu1]-}" ]]; then
+    bindkey -M emacs "$terminfo[kcuu1]" history-substring-search-up
+    bindkey -M viins "$terminfo[kcuu1]" history-substring-search-up
+  fi
+
+  if [[ -n "${terminfo[kcud1]-}" ]]; then
+    bindkey -M emacs "$terminfo[kcud1]" history-substring-search-down
+    bindkey -M viins "$terminfo[kcud1]" history-substring-search-down
+  fi
+}
+
 # Keep the prompt working even when the plugin manager is unavailable.
 load_local_dracula_theme() {
   local theme_path="$HOME/.config/zsh_custom/themes/zsh-theme/dracula.zsh-theme"
 
   (( $+functions[dracula_git_async] )) && return
   [[ -f "$theme_path" ]] && source "$theme_path"
+}
+
+load_local_history_substring_search() {
+  local plugin_path="$HOME/.oh-my-zsh/plugins/history-substring-search/history-substring-search.plugin.zsh"
+
+  (( ${+functions[history-substring-search-up]} )) && return
+  [[ -f "$plugin_path" ]] && source "$plugin_path"
 }
 
 # Initialize antidote
@@ -54,6 +75,7 @@ elif [[ -f ~/.antidote/antidote.zsh ]]; then
 fi
 command -v antidote &>/dev/null && antidote load ~/.config/zsh_plugins
 load_local_dracula_theme
+load_local_history_substring_search
 unset ANTIDOTE_PATH
 
 # Initialize zinit when it is already installed locally.
@@ -69,6 +91,7 @@ ZSH_CUSTOM=~/.config/zsh_custom
 
 # Keybindings - map ctrl+left and ctrl+right to universal behaviors
 bindkey -e
+restore_history_search_bindings
 bindkey '^[[1;9C' forward-word
 bindkey '^[[1;9D' backward-word
 
