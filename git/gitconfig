@@ -54,11 +54,7 @@
 	defaultBranch = main
 
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
 	helper = !/usr/bin/gh auth git-credential
 
-[safe]
-	directory = /home/dcramer/src/sentry-mcp
+[credential "https://gist.github.com"]
+	helper = !/usr/bin/gh auth git-credential
