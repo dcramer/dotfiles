@@ -1,0 +1,22 @@
+version = 1
+agents = ["claude", "cursor", "codex", "vscode", "opencode"]
+
+[[skills]]
+name = "pr-writer"
+source = "getsentry/skills"
+
+[[skills]]
+name = "skill-writer"
+source = "getsentry/skills"
+
+[[skills]]
+name = "iterate-pr"
+source = "getsentry/skills"
+
+[[skills]]
+name = "agents-md"
+source = "getsentry/skills"
+
+[[skills]]
+name = "prompt-optimizer"
+source = "getsentry/skills"
