@@ -335,3 +335,11 @@ export CLAUDE_CODE_NO_FLICKER=1
 
 # zsh-syntax-highlighting must load after other widgets and keybindings.
 (( ${+functions[dotfiles_load_zinit_syntax_highlighting]} )) && dotfiles_load_zinit_syntax_highlighting
+
+# pnpm
+export PNPM_HOME="/Users/dcramer/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

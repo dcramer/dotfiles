@@ -19,6 +19,15 @@ trust_level = "trusted"
 [projects."/home/dcramer/src/vitest-evals"]
 trust_level = "trusted"
 
+[projects."/Users/dcramer/src/junior"]
+trust_level = "trusted"
+
+[projects."/Users/dcramer/src/sentry-mcp"]
+trust_level = "trusted"
+
+[projects."/Users/dcramer/src/dotfiles"]
+trust_level = "trusted"
+
 [plugins."github@openai-curated"]
 enabled = true
 
@@ -34,3 +43,6 @@ bearer_token_env_var = "UIDOTSH_TOKEN"
 
 [mcp_servers.uidotsh.tools.uidotsh_fetch]
 approval_mode = "approve"
+
+[notice]
+hide_rate_limit_model_nudge = true
