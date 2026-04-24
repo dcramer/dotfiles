@@ -14,6 +14,10 @@ name = "iterate-pr"
 source = "getsentry/skills"
 
 [[skills]]
+name = "commit"
+source = "getsentry/skills"
+
+[[skills]]
 name = "agents-md"
 source = "getsentry/skills"
 
