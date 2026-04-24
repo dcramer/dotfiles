@@ -330,11 +330,7 @@ if [[ "$IS_WSL" == true ]]; then
   export WSLENV=ANDROID_HOME/p
 fi
 
-alias claude="/home/dcramer/.claude/local/claude"
 export CLAUDE_CODE_NO_FLICKER=1
-
-# zsh-syntax-highlighting must load after other widgets and keybindings.
-(( ${+functions[dotfiles_load_zinit_syntax_highlighting]} )) && dotfiles_load_zinit_syntax_highlighting
 
 # pnpm
 export PNPM_HOME="/Users/dcramer/Library/pnpm"
@@ -343,3 +339,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# zsh-syntax-highlighting must load after other widgets and keybindings.
+(( ${+functions[dotfiles_load_zinit_syntax_highlighting]} )) && dotfiles_load_zinit_syntax_highlighting
