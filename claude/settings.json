@@ -1,6 +1,6 @@
 {
-  "model": "opus",
-  "hooks": {}
+  "model": "opus[1m]",
+  "hooks": {},
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
