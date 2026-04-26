@@ -12,12 +12,12 @@ IS_MACOS=false
 IS_WSL=false
 if [[ "$OSTYPE" == "darwin"* ]]; then
   IS_MACOS=true
-elif [[ -e /proc/version ]] && grep -q microsoft /proc/version; then
+elif [[ -e /proc/version ]] && grep -qi microsoft /proc/version; then
   IS_WSL=true
 fi
 
 # Start ssh-agent on Linux (macOS uses launchd to manage it)
-if [[ "$IS_MACOS" == false ]] && [[ -z "$SSH_AUTH_SOCK" ]]; then
+if [[ "$IS_MACOS" == false ]] && [[ -z "$SSH_AUTH_SOCK" ]] && command -v ssh-agent &>/dev/null; then
   eval "$(ssh-agent -s)" > /dev/null
 fi
 
@@ -31,10 +31,26 @@ autoload -Uz add-zsh-hook bashcompinit compinit
 # Resolve the real dotfiles zsh directory even when ~/.zshrc is symlinked here.
 DOTFILES_ZSH_DIR="${${(%):-%N}:A:h}"
 
+# Persist command history across interactive shells.
+export HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+export HISTSIZE=50000
+export SAVEHIST=50000
+setopt append_history
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt inc_append_history
+setopt share_history
+
 # Cache completion metadata for plugin-provided compdefs.
-export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
-mkdir -p "$ZSH_CACHE_DIR/completions"
 export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+typeset -gA ZINIT
+ZINIT[HOME_DIR]="${XDG_DATA_HOME:-$HOME/.local/share}/zinit"
+ZINIT[COMPLETIONS_DIR]="$ZINIT[HOME_DIR]/completions"
+export ZSH_CACHE_DIR="$ZINIT[HOME_DIR]/cache"
+mkdir -p "$ZSH_CACHE_DIR/completions" "$ZINIT[COMPLETIONS_DIR]"
 [[ -f "$DOTFILES_ZSH_DIR/zinit_plugins.zsh" ]] && source "$DOTFILES_ZSH_DIR/zinit_plugins.zsh"
 
 enable_bash_completion() {
@@ -45,10 +61,20 @@ enable_bash_completion() {
 restore_history_search_bindings() {
   (( ${+functions[history-substring-search-up]} )) || return
 
+  bindkey -M emacs '^[[A' history-substring-search-up
+  bindkey -M viins '^[[A' history-substring-search-up
+  bindkey -M emacs '^[OA' history-substring-search-up
+  bindkey -M viins '^[OA' history-substring-search-up
+
   if [[ -n "${terminfo[kcuu1]-}" ]]; then
     bindkey -M emacs "$terminfo[kcuu1]" history-substring-search-up
     bindkey -M viins "$terminfo[kcuu1]" history-substring-search-up
   fi
+
+  bindkey -M emacs '^[[B' history-substring-search-down
+  bindkey -M viins '^[[B' history-substring-search-down
+  bindkey -M emacs '^[OB' history-substring-search-down
+  bindkey -M viins '^[OB' history-substring-search-down
 
   if [[ -n "${terminfo[kcud1]-}" ]]; then
     bindkey -M emacs "$terminfo[kcud1]" history-substring-search-down
@@ -71,7 +97,7 @@ fi
 load_local_dracula_theme
 
 # Initialize zsh completion system after all completion paths are available.
-compinit -d "$ZSH_CACHE_DIR/.zcompdump"
+compinit -i -d "$ZSH_CACHE_DIR/.zcompdump"
 (( ${+functions[_zinit]} )) && _comps[zinit]=_zinit
 (( ${+functions[zinit]} )) && zinit cdreplay -q
 
@@ -317,7 +343,7 @@ add-zsh-hook preexec terminal_title_preexec
 
 if [[ "$IS_MACOS" == true ]]; then
   mkdir -p "$SCREENSHOTS_PATH"
-  defaults write com.apple.screencapture location "$SCREENSHOTS_PATH"
+  command -v defaults &>/dev/null && defaults write com.apple.screencapture location "$SCREENSHOTS_PATH"
 fi
 
 # dex completions
