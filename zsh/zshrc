@@ -123,7 +123,11 @@ export POETRY_VIRTUALENVS_IN_PROJECT=1
 export VOLTA_HOME=~/.volta
 
 # pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
+if [[ "$IS_MACOS" == true ]]; then
+  export PNPM_HOME="$HOME/Library/pnpm"
+else
+  export PNPM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/pnpm"
+fi
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -331,14 +335,6 @@ if [[ "$IS_WSL" == true ]]; then
 fi
 
 export CLAUDE_CODE_NO_FLICKER=1
-
-# pnpm
-export PNPM_HOME="/Users/dcramer/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
 
 # zsh-syntax-highlighting must load after other widgets and keybindings.
 (( ${+functions[dotfiles_load_zinit_syntax_highlighting]} )) && dotfiles_load_zinit_syntax_highlighting
