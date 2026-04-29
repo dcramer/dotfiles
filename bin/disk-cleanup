@@ -158,6 +158,9 @@ remove_paths() {
 
   local -a existing=()
   local path
+  local removed=0
+  local failed=0
+  local status=0
 
   for path in "$@"; do
     [[ -e "$path" ]] && existing+=("$path")
@@ -177,10 +180,20 @@ remove_paths() {
   fi
 
   for path in "${existing[@]}"; do
-    rm -rf "$path"
+    if rm -rf "$path"; then
+      ((removed += 1))
+    else
+      status=$?
+      ((failed += 1))
+      echo "  warning: failed to remove $path with status $status; continuing"
+    fi
   done
 
-  echo "removed ${#existing[@]} path(s)"
+  if (( failed > 0 )); then
+    echo "removed $removed path(s); failed to remove $failed path(s)"
+  else
+    echo "removed $removed path(s)"
+  fi
 }
 
 remove_directory_contents() {
@@ -256,11 +269,17 @@ begin_action() {
 
 run_or_echo() {
   local apply="$1"
+  local status=0
   shift
 
   print_command "$@"
   if [[ "$apply" == true ]]; then
-    "$@"
+    if "$@"; then
+      return 0
+    else
+      status=$?
+      echo "  warning: command failed with status $status; continuing"
+    fi
   fi
 }
 
@@ -391,27 +410,39 @@ clean_package_managers() {
   fi
 
   if command -v npm >/dev/null 2>&1; then
-    npm_version="$(npm --version 2>/dev/null || true)"
+    if ! npm_version="$(npm --version 2>/dev/null)"; then
+      echo "  npm shim is present but npm is unavailable; skipping"
+      npm_version=""
+    fi
     npm_major="${npm_version%%.*}"
-    run_or_echo "$apply" npm cache clean --force
 
-    if [[ "$npm_major" =~ ^[0-9]+$ ]] && (( npm_major >= 11 )); then
-      run_or_echo "$apply" npm cache npx rm
-    else
-      echo "  npm cache npx rm is only available on newer npm releases; skipping"
+    if [[ -n "$npm_version" ]]; then
+      run_or_echo "$apply" npm cache clean --force
+
+      if [[ "$npm_major" =~ ^[0-9]+$ ]] && (( npm_major >= 11 )); then
+        run_or_echo "$apply" npm cache npx rm --force
+      else
+        echo "  npm cache npx rm is only available on newer npm releases; skipping"
+      fi
     fi
   else
     echo "  npm not installed; skipping"
   fi
 
   if command -v yarn >/dev/null 2>&1; then
-    yarn_version="$(yarn --version 2>/dev/null || true)"
-    yarn_major="${yarn_version%%.*}"
+    if ! yarn_version="$(yarn --version 2>/dev/null)"; then
+      echo "  yarn shim is present but yarn is unavailable; skipping"
+      yarn_version=""
+    fi
 
-    if [[ "$yarn_major" =~ ^[0-9]+$ ]] && (( yarn_major >= 2 )); then
-      run_or_echo "$apply" yarn cache clean --mirror
-    else
-      run_or_echo "$apply" yarn cache clean
+    if [[ -n "$yarn_version" ]]; then
+      yarn_major="${yarn_version%%.*}"
+
+      if [[ "$yarn_major" =~ ^[0-9]+$ ]] && (( yarn_major >= 2 )); then
+        run_or_echo "$apply" yarn cache clean --mirror
+      else
+        run_or_echo "$apply" yarn cache clean
+      fi
     fi
   else
     echo "  yarn not installed; skipping"
