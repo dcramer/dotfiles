@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""Render a directory tree with Unicode branch characters."""
+
+from __future__ import annotations
+
+import argparse
+import fnmatch
+import os
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+UNICODE_GUIDES = {
+    "tee": "\u251c\u2500\u2500 ",
+    "last": "\u2514\u2500\u2500 ",
+    "pipe": "\u2502   ",
+    "space": "    ",
+}
+ASCII_GUIDES = {
+    "tee": "|-- ",
+    "last": "`-- ",
+    "pipe": "|   ",
+    "space": "    ",
+}
+
+
+@dataclass
+class Counts:
+    dirs: int = 0
+    files: int = 0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Render a directory tree.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument("path", nargs="?", default=".", help="directory to render")
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="include dotfiles and dot directories",
+    )
+    parser.add_argument(
+        "-L",
+        "--level",
+        type=int,
+        default=None,
+        help="maximum directory depth to render",
+    )
+    parser.add_argument(
+        "-I",
+        "--ignore",
+        action="append",
+        default=[],
+        help="glob pattern to exclude; may be passed more than once",
+    )
+    parser.add_argument(
+        "--dirs-first",
+        action="store_true",
+        help="show directories before files",
+    )
+    parser.add_argument(
+        "--ascii",
+        action="store_true",
+        help="use ASCII guide characters",
+    )
+    parser.add_argument(
+        "--no-summary",
+        action="store_true",
+        help="omit the final directory/file count",
+    )
+    return parser.parse_args()
+
+
+def format_name(path: Path) -> str:
+    name = path.name or str(path)
+    if path.is_symlink():
+        try:
+            return f"{name} -> {os.readlink(path)}"
+        except OSError:
+            return name
+    if path.is_dir():
+        return f"{name}/"
+    return name
+
+
+def is_hidden(path: Path) -> bool:
+    return path.name.startswith(".")
+
+
+def should_skip(path: Path, args: argparse.Namespace) -> bool:
+    if not args.all and is_hidden(path):
+        return True
+    return any(fnmatch.fnmatch(path.name, pattern) for pattern in args.ignore)
+
+
+def sorted_children(path: Path, args: argparse.Namespace) -> list[Path]:
+    try:
+        children = [child for child in path.iterdir() if not should_skip(child, args)]
+    except PermissionError:
+        print(f"{path}: permission denied", file=sys.stderr)
+        return []
+    except OSError as exc:
+        print(f"{path}: {exc.strerror}", file=sys.stderr)
+        return []
+
+    children.sort(key=lambda child: child.name.lower())
+    if args.dirs_first:
+        children.sort(key=lambda child: not child.is_dir())
+    return children
+
+
+def walk_tree(
+    path: Path,
+    args: argparse.Namespace,
+    counts: Counts,
+    guides: dict[str, str],
+    prefix: str = "",
+    depth: int = 0,
+) -> None:
+    if args.level is not None and depth >= args.level:
+        return
+
+    children = sorted_children(path, args)
+    for index, child in enumerate(children):
+        is_last = index == len(children) - 1
+        branch = guides["last"] if is_last else guides["tee"]
+        print(f"{prefix}{branch}{format_name(child)}")
+
+        if child.is_dir() and not child.is_symlink():
+            counts.dirs += 1
+            extension = guides["space"] if is_last else guides["pipe"]
+            walk_tree(child, args, counts, guides, prefix + extension, depth + 1)
+        else:
+            counts.files += 1
+
+
+def main() -> int:
+    args = parse_args()
+    root = Path(args.path).expanduser()
+    guides = ASCII_GUIDES if args.ascii else UNICODE_GUIDES
+    counts = Counts()
+
+    if not root.exists():
+        print(f"tree: {root}: no such file or directory", file=sys.stderr)
+        return 1
+
+    print(str(root))
+
+    if root.is_dir() and not root.is_symlink():
+        walk_tree(root, args, counts, guides)
+    else:
+        counts.files += 1
+
+    if not args.no_summary:
+        print()
+        print(f"{counts.dirs} directories, {counts.files} files")
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
