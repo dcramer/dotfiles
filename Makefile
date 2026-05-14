@@ -1,5 +1,9 @@
 IS_DARWIN := $(filter Darwin,$(shell uname))
 IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
+GIT_LOCAL_CONFIG ?= $(HOME)/.gitconfig.local
+GIT_SIGNING_KEY ?= $(HOME)/.ssh/id_ed25519.pub
+GIT_ALLOWED_SIGNERS ?= $(HOME)/.ssh/git_allowed_signers
+GIT_SIGNING_KEY_TITLE ?= Work Macbook
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
@@ -9,6 +13,17 @@ install-global: install-user
 
 install-git:
 	ln -fs `pwd`/git/gitconfig ~/.gitconfig
+
+configure-git-signing:
+	@test -f "$(GIT_SIGNING_KEY)" || (echo "Missing SSH public key: $(GIT_SIGNING_KEY)"; exit 1)
+	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all user.signingkey "$(GIT_SIGNING_KEY)"
+	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all gpg.ssh.allowedSignersFile "$(GIT_ALLOWED_SIGNERS)"
+	@mkdir -p "$(dir $(GIT_ALLOWED_SIGNERS))"
+	@awk -v email="$$(git config user.email)" '{print email, $$0}' "$(GIT_SIGNING_KEY)" > "$(GIT_ALLOWED_SIGNERS)"
+	@echo "Configured Git signing key in $(GIT_LOCAL_CONFIG): $(GIT_SIGNING_KEY)"
+	@echo "Configured SSH allowed signers file: $(GIT_ALLOWED_SIGNERS)"
+	@echo "Add it to GitHub as a signing key with:"
+	@echo "  gh ssh-key add $(GIT_SIGNING_KEY) --type signing --title \"$(GIT_SIGNING_KEY_TITLE)\""
 
 install-hg:
 	ln -fs `pwd`/hg/hgrc ~/.hgrc

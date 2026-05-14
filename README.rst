@@ -19,3 +19,8 @@ One of the more useful maintenance scripts is ``disk-cleanup``:
     disk-cleanup
     disk-cleanup --run
     disk-cleanup --deep
+
+Docs
+----
+
+GitHub and commit-signing setup notes live in ``docs/github.md``.

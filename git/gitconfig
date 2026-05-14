@@ -5,6 +5,15 @@
   name = David Cramer
   email = dcramer@gmail.com
 
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
+
+[tag]
+  gpgSign = true
+
 [color]
   ui = auto
 
@@ -60,3 +69,6 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !gh auth git-credential
+
+[include]
+  path = ~/.gitconfig.local

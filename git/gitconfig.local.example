@@ -1,0 +1,8 @@
+# Per-machine Git settings for ~/.gitconfig.local.
+# `make configure-git-signing` writes the signing key path for this host.
+
+[user]
+  signingkey = ~/.ssh/id_ed25519.pub
+
+[gpg "ssh"]
+  allowedSignersFile = ~/.ssh/git_allowed_signers
