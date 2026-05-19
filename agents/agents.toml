@@ -24,3 +24,7 @@ source = "getsentry/skills"
 [[skills]]
 name = "prompt-optimizer"
 source = "getsentry/skills"
+
+[[skills]]
+name = "agent-browser"
+source = "vercel-labs/agent-browser"
