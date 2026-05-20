@@ -8,4 +8,6 @@ Host *.local
     ForwardAgent yes
 
 Host *
+    IgnoreUnknown UseKeychain
     AddKeysToAgent yes
+    UseKeychain yes

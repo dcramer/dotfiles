@@ -16,10 +16,47 @@ elif [[ -e /proc/version ]] && grep -qi microsoft /proc/version; then
   IS_WSL=true
 fi
 
-# Start ssh-agent on Linux (macOS uses launchd to manage it)
-if [[ "$IS_MACOS" == false ]] && [[ -z "$SSH_AUTH_SOCK" ]] && command -v ssh-agent &>/dev/null; then
-  eval "$(ssh-agent -s)" > /dev/null
-fi
+# Reuse one ssh-agent across Linux/WSL shells. macOS uses launchd to manage it.
+setup_ssh_agent() {
+  [[ "$IS_MACOS" == true ]] && return
+  command -v ssh-agent &>/dev/null || return
+
+  if [[ -n "$SSH_AUTH_SOCK" && -S "$SSH_AUTH_SOCK" ]]; then
+    ssh-add -l &>/dev/null
+    case $? in
+      0|1) return ;;
+    esac
+  fi
+
+  local base_dir agent_dir agent_sock
+  local agent_base_dirs=()
+  [[ -n "$XDG_RUNTIME_DIR" ]] && agent_base_dirs+=("${XDG_RUNTIME_DIR%/}")
+  agent_base_dirs+=("/tmp")
+
+  for base_dir in "${agent_base_dirs[@]}"; do
+    agent_dir="$base_dir/ssh-agent-${UID}"
+    agent_sock="$agent_dir/socket"
+    mkdir -p "$agent_dir" 2>/dev/null || continue
+    chmod 700 "$agent_dir" 2>/dev/null || continue
+
+    if [[ -S "$agent_sock" ]]; then
+      SSH_AUTH_SOCK="$agent_sock" ssh-add -l &>/dev/null
+      case $? in
+        0|1)
+          export SSH_AUTH_SOCK="$agent_sock"
+          return
+          ;;
+      esac
+    fi
+
+    rm -f "$agent_sock"
+    if eval "$(ssh-agent -a "$agent_sock" -s 2>/dev/null)" > /dev/null 2>&1; then
+      return
+    fi
+  done
+}
+setup_ssh_agent
+unfunction setup_ssh_agent
 
 # ═══════════════════════════════════════════════════════════════
 # 2. ZSH CONFIGURATION

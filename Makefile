@@ -3,7 +3,7 @@ IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
 GIT_LOCAL_CONFIG ?= $(HOME)/.gitconfig.local
 GIT_SIGNING_KEY ?= $(HOME)/.ssh/id_ed25519.pub
 GIT_ALLOWED_SIGNERS ?= $(HOME)/.ssh/git_allowed_signers
-GIT_SIGNING_KEY_TITLE ?= Work Macbook
+GIT_SIGNING_KEY_TITLE ?= $(shell hostname) git signing
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
@@ -24,6 +24,34 @@ configure-git-signing:
 	@echo "Configured SSH allowed signers file: $(GIT_ALLOWED_SIGNERS)"
 	@echo "Add it to GitHub as a signing key with:"
 	@echo "  gh ssh-key add $(GIT_SIGNING_KEY) --type signing --title \"$(GIT_SIGNING_KEY_TITLE)\""
+
+setup-git-signing: configure-git-signing add-github-signing-key load-git-signing-key
+
+add-github-signing-key:
+	@if ! command -v gh >/dev/null 2>&1; then \
+		echo "GitHub CLI is not installed; skipping GitHub signing key registration."; \
+		echo "Add it later with:"; \
+		echo "  gh ssh-key add $(GIT_SIGNING_KEY) --type signing --title \"$(GIT_SIGNING_KEY_TITLE)\""; \
+	else \
+		key="$$(awk '{print $$1 " " $$2}' "$(GIT_SIGNING_KEY)")"; \
+		if gh api /user/ssh_signing_keys --jq '.[].key' 2>/dev/null | grep -Fx "$$key" >/dev/null; then \
+			echo "GitHub signing key already exists: $(GIT_SIGNING_KEY_TITLE)"; \
+		elif ! gh ssh-key add "$(GIT_SIGNING_KEY)" --type signing --title "$(GIT_SIGNING_KEY_TITLE)"; then \
+			echo ""; \
+			echo "If GitHub reported a missing scope, run:"; \
+			echo "  gh auth refresh -h github.com -s admin:ssh_signing_key"; \
+			echo "Then rerun:"; \
+			echo "  make setup-git-signing"; \
+			exit 1; \
+		fi; \
+	fi
+
+load-git-signing-key:
+ifeq ($(IS_DARWIN),Darwin)
+	ssh-add --apple-use-keychain "$(patsubst %.pub,%,$(GIT_SIGNING_KEY))"
+else
+	ssh-add "$(patsubst %.pub,%,$(GIT_SIGNING_KEY))"
+endif
 
 install-hg:
 	ln -fs `pwd`/hg/hgrc ~/.hgrc

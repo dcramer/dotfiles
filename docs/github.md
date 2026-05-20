@@ -19,37 +19,40 @@ To configure a new machine:
 
 ```sh
 make install-git
-make configure-git-signing
+make setup-git-signing
 ```
 
 By default this uses `~/.ssh/id_ed25519.pub` and labels the GitHub signing key
-as `Work Macbook`. Override these when needed:
+as `<hostname> git signing`. Override these when needed:
 
 ```sh
-make configure-git-signing \
+make setup-git-signing \
   GIT_SIGNING_KEY="$HOME/.ssh/id_work.pub" \
   GIT_SIGNING_KEY_TITLE="Personal Macbook"
 ```
 
-The target writes:
+The target:
 
 - `user.signingkey` in `~/.gitconfig.local`
 - `gpg.ssh.allowedSignersFile` in `~/.gitconfig.local`
 - `~/.ssh/git_allowed_signers` for local `git log --show-signature` verification
+- Adds the public key to GitHub as an SSH signing key when `gh` is available
+- Loads the private key into the current SSH agent
 
-After local setup, add the public key to GitHub as an SSH signing key:
-
-```sh
-gh ssh-key add ~/.ssh/id_ed25519.pub --type signing --title "Work Macbook"
-```
-
-If GitHub CLI lacks the required scope:
+If GitHub CLI lacks the required scope, refresh auth and rerun setup:
 
 ```sh
 gh auth refresh -h github.com -s admin:ssh_signing_key
+make setup-git-signing
 ```
 
-Then rerun the `gh ssh-key add` command.
+On Linux and WSL, zsh starts or reuses a shared `ssh-agent` socket without
+prompting during terminal startup. Run `make setup-git-signing` once per new
+machine, and run `ssh-add ~/.ssh/id_ed25519` again only after the agent is reset
+or WSL is restarted.
+
+On macOS, SSH uses the system agent and Keychain. The setup target uses
+`ssh-add --apple-use-keychain` so the passphrase can be restored by Keychain.
 
 To verify locally:
 
