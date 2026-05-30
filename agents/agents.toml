@@ -28,3 +28,7 @@ source = "getsentry/skills"
 [[skills]]
 name = "agent-browser"
 source = "vercel-labs/agent-browser"
+
+[[skills]]
+name = "*"
+source = "dcramer/agents"
