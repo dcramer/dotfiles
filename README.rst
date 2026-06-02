@@ -6,7 +6,7 @@ You will need Armin's vcprompt for the bash prompt: https://bitbucket.org/mitsuh
 
 ::
 
-    git clone git://github.com/dcramer/dotfiles.git && cd dotfiles && make
+    git clone git://github.com/dcramer/dotfiles.git && cd dotfiles && make install
 
 Useful helpers
 --------------
@@ -19,6 +19,10 @@ One of the more useful maintenance scripts is ``disk-cleanup``:
     disk-cleanup
     disk-cleanup --run
     disk-cleanup --deep
+
+On macOS, ``make install`` also installs ``~/Applications/Lock Screen.app``.
+Spotlight indexes it, so ``Cmd-Space`` followed by ``lock`` provides a quick
+Lock Screen launcher without logging out.
 
 Docs
 ----

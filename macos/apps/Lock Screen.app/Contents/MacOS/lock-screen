@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+helper="${0%/*}/lock-screen-helper"
+if [ -x "$helper" ] && "$helper"; then
+    exit 0
+fi
+
+cgsession="/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession"
+if [ -x "$cgsession" ]; then
+    exec "$cgsession" -suspend
+fi
+
+# The display-sleep fallback only locks when this setting is immediate.
+/usr/bin/defaults write com.apple.screensaver askForPassword -int 1 >/dev/null 2>&1 || true
+/usr/bin/defaults write com.apple.screensaver askForPasswordDelay -int 0 >/dev/null 2>&1 || true
+/usr/bin/defaults -currentHost write com.apple.screensaver askForPassword -int 1 >/dev/null 2>&1 || true
+/usr/bin/defaults -currentHost write com.apple.screensaver askForPasswordDelay -int 0 >/dev/null 2>&1 || true
+
+exec /usr/bin/pmset displaysleepnow

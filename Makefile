@@ -4,10 +4,17 @@ GIT_LOCAL_CONFIG ?= $(HOME)/.gitconfig.local
 GIT_SIGNING_KEY ?= $(HOME)/.ssh/id_ed25519.pub
 GIT_ALLOWED_SIGNERS ?= $(HOME)/.ssh/git_allowed_signers
 GIT_SIGNING_KEY_TITLE ?= $(shell hostname) git signing
+MACOS_LOCK_SCREEN_APP ?= $(HOME)/Applications/Lock Screen.app
+MACOS_LOCK_SCREEN_SOURCE_APP := $(CURDIR)/macos/apps/Lock Screen.app
+MACOS_LOCK_SCREEN_HELPER := $(MACOS_LOCK_SCREEN_APP)/Contents/MacOS/lock-screen-helper
+MACOS_LSREGISTER := /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+
+install: install-user
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
-		 install-nuget install-zsh install-claude install-dotagents
+		 install-nuget install-zsh install-claude install-dotagents \
+		 install-macos-lock-screen
 
 install-global: install-user
 
@@ -148,6 +155,27 @@ install-zsh: install-zinit
 install-nuget:
 	mkdir -p ~/.nuget
 	wget -O ~/.nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+
+install-macos-lock-screen:
+ifeq ($(IS_DARWIN),Darwin)
+	@mkdir -p "$(HOME)/Applications"
+	@/usr/bin/ditto "$(MACOS_LOCK_SCREEN_SOURCE_APP)" "$(MACOS_LOCK_SCREEN_APP)"
+	@chmod +x "$(MACOS_LOCK_SCREEN_APP)/Contents/MacOS/lock-screen"
+	@if command -v clang >/dev/null 2>&1; then \
+		clang -F /System/Library/PrivateFrameworks -framework login \
+			-o "$(MACOS_LOCK_SCREEN_HELPER)" "$(CURDIR)/macos/lock-screen/lock-screen.c"; \
+	else \
+		echo "clang not found; Lock Screen.app will use display-sleep fallback."; \
+	fi
+	@/usr/bin/plutil -lint "$(MACOS_LOCK_SCREEN_APP)/Contents/Info.plist" >/dev/null
+	@if [ -x "$(MACOS_LSREGISTER)" ]; then \
+		"$(MACOS_LSREGISTER)" -f "$(MACOS_LOCK_SCREEN_APP)" >/dev/null 2>&1 || true; \
+	fi
+	@echo "Installed $(MACOS_LOCK_SCREEN_APP)"
+	@echo "Use Spotlight: Cmd-Space, type Lock Screen, Return."
+else
+	@true
+endif
 
 install-ssh:
 ifneq ($(or $(IS_DARWIN),$(IS_WSL)),)
