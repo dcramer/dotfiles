@@ -8,12 +8,6 @@
 [gpg]
   format = ssh
 
-[commit]
-  gpgsign = true
-
-[tag]
-  gpgSign = true
-
 [color]
   ui = auto
 

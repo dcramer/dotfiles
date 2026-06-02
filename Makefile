@@ -18,6 +18,8 @@ configure-git-signing:
 	@test -f "$(GIT_SIGNING_KEY)" || (echo "Missing SSH public key: $(GIT_SIGNING_KEY)"; exit 1)
 	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all user.signingkey "$(GIT_SIGNING_KEY)"
 	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all gpg.ssh.allowedSignersFile "$(GIT_ALLOWED_SIGNERS)"
+	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all commit.gpgsign true
+	git config --file "$(GIT_LOCAL_CONFIG)" --replace-all tag.gpgSign true
 	@mkdir -p "$(dir $(GIT_ALLOWED_SIGNERS))"
 	@awk -v email="$$(git config user.email)" '{print email, $$0}' "$(GIT_SIGNING_KEY)" > "$(GIT_ALLOWED_SIGNERS)"
 	@echo "Configured Git signing key in $(GIT_LOCAL_CONFIG): $(GIT_SIGNING_KEY)"
@@ -25,7 +27,9 @@ configure-git-signing:
 	@echo "Add it to GitHub as a signing key with:"
 	@echo "  gh ssh-key add $(GIT_SIGNING_KEY) --type signing --title \"$(GIT_SIGNING_KEY_TITLE)\""
 
-setup-git-signing: configure-git-signing add-github-signing-key load-git-signing-key
+repair-git-signing: install-git load-git-signing-key configure-git-signing check-git-signing
+
+setup-git-signing: install-git load-git-signing-key configure-git-signing add-github-signing-key check-git-signing
 
 add-github-signing-key:
 	@if ! command -v gh >/dev/null 2>&1; then \
@@ -47,11 +51,68 @@ add-github-signing-key:
 	fi
 
 load-git-signing-key:
+	@test -f "$(patsubst %.pub,%,$(GIT_SIGNING_KEY))" || (echo "Missing SSH private key: $(patsubst %.pub,%,$(GIT_SIGNING_KEY))"; exit 1)
 ifeq ($(IS_DARWIN),Darwin)
 	ssh-add --apple-use-keychain "$(patsubst %.pub,%,$(GIT_SIGNING_KEY))"
 else
 	ssh-add "$(patsubst %.pub,%,$(GIT_SIGNING_KEY))"
 endif
+
+check-git-signing:
+	@status=0; \
+	gpg_format="$$(git config --get gpg.format 2>/dev/null || true)"; \
+	if [ "$$gpg_format" = "ssh" ]; then \
+		echo "ok: gpg.format=ssh"; \
+	else \
+		echo "missing: gpg.format=ssh"; \
+		status=1; \
+	fi; \
+	commit_signing="$$(git config --bool --get commit.gpgsign 2>/dev/null || true)"; \
+	if [ "$$commit_signing" = "true" ]; then \
+		echo "ok: commit.gpgsign=true"; \
+	else \
+		echo "missing: commit.gpgsign=true"; \
+		status=1; \
+	fi; \
+	tag_signing="$$(git config --bool --get tag.gpgsign 2>/dev/null || true)"; \
+	if [ "$$tag_signing" = "true" ]; then \
+		echo "ok: tag.gpgSign=true"; \
+	else \
+		echo "missing: tag.gpgSign=true"; \
+		status=1; \
+	fi; \
+	signing_key="$$(git config --get user.signingkey 2>/dev/null || true)"; \
+	signing_key_path="$$signing_key"; \
+	case "$$signing_key" in "~/"*) signing_key_path="$(HOME)/$${signing_key#~/}";; esac; \
+	if [ -n "$$signing_key" ] && [ -f "$$signing_key_path" ]; then \
+		echo "ok: user.signingkey=$$signing_key"; \
+	else \
+		echo "missing: user.signingkey file"; \
+		status=1; \
+	fi; \
+	allowed_signers="$$(git config --get gpg.ssh.allowedSignersFile 2>/dev/null || true)"; \
+	allowed_signers_path="$$allowed_signers"; \
+	case "$$allowed_signers" in "~/"*) allowed_signers_path="$(HOME)/$${allowed_signers#~/}";; esac; \
+	if [ -n "$$allowed_signers" ] && [ -f "$$allowed_signers_path" ]; then \
+		echo "ok: gpg.ssh.allowedSignersFile=$$allowed_signers"; \
+	else \
+		echo "missing: gpg.ssh.allowedSignersFile"; \
+		status=1; \
+	fi; \
+	if ssh-add -l >/dev/null 2>&1; then \
+		echo "ok: SSH agent has identities"; \
+	else \
+		echo "missing: SSH agent identity; run make load-git-signing-key"; \
+		status=1; \
+	fi; \
+	exit $$status
+
+verify-git-signing: check-git-signing
+	@tmp="$$(mktemp -d)"; \
+	trap 'rm -rf "$$tmp"' EXIT INT TERM; \
+	git -C "$$tmp" init -q; \
+	git -C "$$tmp" commit --allow-empty -m "test signed commit" >/dev/null; \
+	git -C "$$tmp" log --show-signature -1 --format="ok: signed test commit %h (%G?)"
 
 install-hg:
 	ln -fs `pwd`/hg/hgrc ~/.hgrc
