@@ -194,3 +194,4 @@ install-dotagents:
 	mkdir -p ~/.agents
 	ln -fs `pwd`/agents/agents.toml ~/.agents/agents.toml
 	pnpm dlx @sentry/dotagents --user install
+	npx --yes agent-browser@latest install
