@@ -46,7 +46,7 @@
   pager = less -R
 
 [push]
-  default = matching
+  default = current
 [branch]
 	autosetuprebase = always
 
