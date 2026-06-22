@@ -8,13 +8,19 @@ MACOS_LOCK_SCREEN_APP ?= $(HOME)/Applications/Lock Screen.app
 MACOS_LOCK_SCREEN_SOURCE_APP := $(CURDIR)/macos/apps/Lock Screen.app
 MACOS_LOCK_SCREEN_HELPER := $(MACOS_LOCK_SCREEN_APP)/Contents/MacOS/lock-screen-helper
 MACOS_LSREGISTER := /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+DOTFILES_USER_DEPS_LOG ?= $(HOME)/.cache/dotfiles/update-user-deps.log
+DOTFILES_DAILY_HOUR ?= 9
+DOTFILES_DAILY_MINUTE ?= 17
+DOTFILES_CRON_BEGIN := \# BEGIN dotfiles user deps
+DOTFILES_CRON_END := \# END dotfiles user deps
+DOTFILES_CRON_SCHEDULE ?= $(DOTFILES_DAILY_MINUTE) $(DOTFILES_DAILY_HOUR) * * *
 
 install: install-user
 
 install-user: install-virtualenvwrapper install-pythonrc \
 		 install-bin install-git install-hg \
 		 install-nuget install-zsh install-claude install-dotagents \
-		 install-macos-lock-screen
+		 install-user-deps-cron install-macos-lock-screen
 
 install-global: install-user
 
@@ -127,6 +133,7 @@ install-hg:
 install-bin:
 	mkdir -p ~/.bin/
 	ln -fs `pwd`/bin/* ~/.bin/
+	chmod +x `pwd`/bin/*
 
 install-virtualenvwrapper:
 	mkdir -p ~/.virtualenvs/
@@ -195,3 +202,38 @@ install-dotagents:
 	ln -fs `pwd`/agents/agents.toml ~/.agents/agents.toml
 	pnpm dlx @sentry/dotagents --user install
 	npx --yes agent-browser@latest install
+
+update-user-deps:
+	"$(CURDIR)/bin/dotfiles-update-user-deps"
+
+install-user-deps-cron: install-bin
+	@mkdir -p "$(dir $(DOTFILES_USER_DEPS_LOG))"
+	@tmp="$$(mktemp)"; \
+	trap 'rm -f "$$tmp" "$$tmp.new"' EXIT INT TERM; \
+	( crontab -l 2>/dev/null || true ) | awk '\
+		$$0 == "$(DOTFILES_CRON_BEGIN)" { skip = 1; next } \
+		$$0 == "$(DOTFILES_CRON_END)" { skip = 0; next } \
+		!skip { print } \
+	' > "$$tmp"; \
+	{ \
+		cat "$$tmp"; \
+		printf '%s\n' "$(DOTFILES_CRON_BEGIN)"; \
+		printf '%s\n' '$(DOTFILES_CRON_SCHEDULE) DOTFILES_DIR="$(CURDIR)" "$(HOME)/.bin/dotfiles-update-user-deps" >> "$(DOTFILES_USER_DEPS_LOG)" 2>&1'; \
+		printf '%s\n' "$(DOTFILES_CRON_END)"; \
+	} > "$$tmp.new"; \
+	crontab "$$tmp.new"; \
+	echo "Installed daily dotfiles user dependency cron: $(DOTFILES_CRON_SCHEDULE)"
+
+uninstall-user-deps-cron:
+	@tmp="$$(mktemp)"; \
+	trap 'rm -f "$$tmp"' EXIT INT TERM; \
+	( crontab -l 2>/dev/null || true ) | awk '\
+		$$0 == "$(DOTFILES_CRON_BEGIN)" { skip = 1; next } \
+		$$0 == "$(DOTFILES_CRON_END)" { skip = 0; next } \
+		!skip { print } \
+	' > "$$tmp"; \
+	if [ -s "$$tmp" ]; then \
+		crontab "$$tmp"; \
+	else \
+		crontab -r 2>/dev/null || true; \
+	fi

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+PNPM_HOME="${PNPM_HOME:-$HOME/Library/pnpm}"
+
+export PNPM_HOME
+export PATH="$HOME/.bin:$HOME/.local/bin:$PNPM_HOME:$HOME/.volta/bin:$HOME/.npm-global/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+log() {
+  printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+require_command() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    printf 'missing required command: %s\n' "$1" >&2
+    exit 1
+  fi
+}
+
+log "updating dotfiles user dependencies"
+
+mkdir -p "$HOME/.agents"
+ln -fs "$DOTFILES_DIR/agents/agents.toml" "$HOME/.agents/agents.toml"
+
+if ! command -v npx >/dev/null 2>&1 && [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  set +u
+  # shellcheck source=/dev/null
+  . "$NVM_DIR/nvm.sh"
+  set -u
+  nvm use --silent default >/dev/null 2>&1 || true
+fi
+
+require_command pnpm
+require_command npx
+
+pnpm dlx @sentry/dotagents --user install
+npx --yes agent-browser@latest install
+
+log "finished updating dotfiles user dependencies"

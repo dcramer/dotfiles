@@ -12,6 +12,9 @@ Useful helpers
 --------------
 
 The ``bin/`` directory is symlinked into ``~/.bin`` by ``make install-user``.
+``make install`` also installs a daily user crontab entry that runs
+``dotfiles-update-user-deps`` to refresh dotagents and related user-level agent
+tooling. Its output is written to ``~/.cache/dotfiles/update-user-deps.log``.
 One of the more useful maintenance scripts is ``disk-cleanup``:
 
 ::
