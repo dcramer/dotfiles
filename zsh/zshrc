@@ -223,6 +223,7 @@ export PATH="$POETRY_HOME/bin:$PATH"
 
 # pnpm
 [[ ":$PATH:" != *":$PNPM_HOME:"* ]] && export PATH="$PNPM_HOME:$PATH"
+[[ -d "$PNPM_HOME/bin" && ":$PATH:" != *":$PNPM_HOME/bin:"* ]] && export PATH="$PNPM_HOME/bin:$PATH"
 
 # bun
 export PATH="$BUN_INSTALL/bin:$PATH"
