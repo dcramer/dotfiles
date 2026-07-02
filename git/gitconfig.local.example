@@ -1,5 +1,7 @@
 # Per-machine Git settings for ~/.gitconfig.local.
 # `make configure-git-signing` writes the signing key path for this host.
+# This example uses ed25519, but the setup helper will also use ecdsa or rsa
+# keys when those are what exist on the machine.
 
 [user]
   signingkey = ~/.ssh/id_ed25519.pub

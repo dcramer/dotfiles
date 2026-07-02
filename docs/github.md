@@ -32,8 +32,14 @@ That is the local-only fix: it reinstalls `~/.gitconfig`, loads the private key
 into the SSH agent, writes `~/.gitconfig.local`, and checks the result. It does
 not try to register the key with GitHub.
 
-By default this uses `~/.ssh/id_ed25519.pub` and labels the GitHub signing key
-as `<hostname> git signing`. Override these when needed:
+By default this uses the first public key found from:
+
+- `~/.ssh/id_ed25519.pub`
+- `~/.ssh/id_ecdsa.pub`
+- `~/.ssh/id_rsa.pub`
+
+It labels the GitHub signing key as `<hostname> git signing`. Override these
+when needed:
 
 ```sh
 make setup-git-signing \
@@ -60,8 +66,8 @@ make setup-git-signing
 
 On Linux and WSL, zsh starts or reuses a shared `ssh-agent` socket without
 prompting during terminal startup. Run `make setup-git-signing` once per new
-machine, and run `ssh-add ~/.ssh/id_ed25519` again only after the agent is reset
-or WSL is restarted.
+machine, and run `ssh-add` with the private half of your signing key again only
+after the agent is reset or WSL is restarted.
 
 On macOS, SSH uses the system agent and Keychain. The setup target uses
 `ssh-add --apple-use-keychain` so the passphrase can be restored by Keychain.

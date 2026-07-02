@@ -1,7 +1,8 @@
 IS_DARWIN := $(filter Darwin,$(shell uname))
 IS_WSL := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
 GIT_LOCAL_CONFIG ?= $(HOME)/.gitconfig.local
-GIT_SIGNING_KEY ?= $(HOME)/.ssh/id_ed25519.pub
+GIT_SIGNING_KEY_CANDIDATES := $(HOME)/.ssh/id_ed25519.pub $(HOME)/.ssh/id_ecdsa.pub $(HOME)/.ssh/id_rsa.pub
+GIT_SIGNING_KEY ?= $(firstword $(wildcard $(GIT_SIGNING_KEY_CANDIDATES)))
 GIT_ALLOWED_SIGNERS ?= $(HOME)/.ssh/git_allowed_signers
 GIT_SIGNING_KEY_TITLE ?= $(shell hostname) git signing
 MACOS_LOCK_SCREEN_APP ?= $(HOME)/Applications/Lock Screen.app
