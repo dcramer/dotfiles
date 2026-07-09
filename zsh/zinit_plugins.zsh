@@ -9,6 +9,7 @@ dotfiles_load_zinit_plugins() {
   zinit snippet OMZP::git
   zinit snippet OMZP::command-not-found
   zinit snippet OMZP::docker
+  zinit snippet OMZP::dotenv
   zinit snippet OMZP::pip
   zinit snippet OMZP::python
   zinit snippet OMZP::pyenv
