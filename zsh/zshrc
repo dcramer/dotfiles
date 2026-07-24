@@ -409,3 +409,10 @@ if [ -f "$HOME/.env" ]; then
     source "$HOME/.env"
     set +a
 fi
+
+# >>> Codex installer >>>
+export PATH="/home/dcramer/.local/bin:$PATH"
+# <<< Codex installer <<<
+
+# opencode
+export PATH=/home/dcramer/.opencode/bin:$PATH
