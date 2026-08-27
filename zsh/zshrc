@@ -416,3 +416,6 @@ export PATH="/home/dcramer/.local/bin:$PATH"
 
 # opencode
 export PATH=/home/dcramer/.opencode/bin:$PATH
+
+# sentry
+fpath=("/Users/dcramer/.local/share/zsh/site-functions" $fpath)
